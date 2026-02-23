@@ -70,7 +70,6 @@
 </head>
 
 <body>
-  <div class="debugbar" id="debugbar">BOOT: loaded ✅ (no STATE yet)</div>
 
   <div class="topbar">
     <div class="topinner">
@@ -261,11 +260,10 @@
   // RECEIVE from Wix
   window.addEventListener("message", (event) => {
     const msg = event.data || {};
-    if (msg.type === "STATE") {
-      state = msg.payload;
-      setDebug(`STATE ✅ role=${state?.role || "?"} club=${state?.clubSlug || "?"} active=${state?.activePlayerId || "—"}`);
-      render();
-      toast("Data loaded");
+if (msg.type === "STATE") {
+  state = msg.payload;
+  render();
+}
     }
     if (msg.type === "TOAST") toast(msg.payload?.message || "");
     if (msg.type === "PHOTO_SAVED") {
