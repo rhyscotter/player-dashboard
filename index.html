@@ -1,340 +1,372 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Player Dashboard</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Athlete Profile</title>
 
-  <style>
-    :root{--bg:#fff;--ink:#0b0f16;--muted:#6b7280;--line:#e6e7eb;--soft:#f6f7f9;--r:22px}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--ink)}
-    .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-    .topinner{max-width:1100px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-    .left{display:flex;flex-direction:column;gap:6px;min-width:220px}
-    .brand{font-weight:900;letter-spacing:-.4px;font-size:14px;text-transform:uppercase}
-    .club{font-size:12px;color:var(--muted);font-weight:650}
-    .right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
-    .switch{display:none;min-width:320px;max-width:420px}
-    select{
-      width:100%;appearance:none;padding:12px 14px;border-radius:999px;
-      border:1px solid var(--line);background:#fff;color:var(--ink);
-      font-weight:850;letter-spacing:-.2px;outline:none
-    }
-    select:focus{box-shadow:0 0 0 4px rgba(11,15,22,.08)}
-    .chip{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:12px;font-weight:650;white-space:nowrap}
-    .dot{opacity:.35}
+<style>
+:root{
+  --black:#000;
+  --white:#fff;
+  --grey:#f4f4f4;
+  --muted:#8a8a8a;
+  --line:#e5e5e5;
+  --radius:28px;
+}
 
-    .page{max-width:1100px;margin:0 auto;padding:26px 16px 34px}
-    .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px}
-    .heroTitle{font-size:34px;font-weight:950;letter-spacing:-1px;line-height:1}
-    .heroSub{margin-top:10px;font-size:13px;color:var(--muted);font-weight:650}
-    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}.switch{min-width:100%}.heroTitle{font-size:28px}}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  background:var(--white);
+  color:var(--black);
+  -webkit-font-smoothing:antialiased;
+}
 
-    .panel{border:1px solid var(--line);border-radius:var(--r);padding:18px;background:#fff}
-    .panelSoft{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:18px}
-    .row{display:flex;gap:16px;align-items:center}
-    .avatarWrap{position:relative;width:78px;height:78px;flex:0 0 auto}
-    .avatar{width:78px;height:78px;border-radius:20px;object-fit:cover;background:#eceff4;display:block}
-    .badge{position:absolute;right:-6px;bottom:-6px;background:var(--ink);color:#fff;border-radius:999px;font-size:11px;font-weight:900;padding:6px 8px;border:2px solid #fff;display:none}
-    .name{font-size:16px;font-weight:900;letter-spacing:-.4px}
-    .sub{margin-top:6px;color:var(--muted);font-size:13px;font-weight:650}
-    .team{margin-top:10px;font-size:13px;font-weight:850;letter-spacing:-.2px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-    button{border:0;border-radius:999px;padding:12px 16px;font-weight:900;letter-spacing:-.2px;font-size:13px;cursor:pointer;transition:transform .05s ease,opacity .2s ease}
-    button:active{transform:scale(.99)}
-    .primary{background:var(--ink);color:#fff}
-    .ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
-    .disabled{opacity:.45;pointer-events:none}
+.top{
+  padding:18px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--line);
+}
 
-    .kpis{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .kpi{border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff}
-    .kpiLabel{color:var(--muted);font-size:12px;font-weight:650}
-    .kpiValue{margin-top:8px;font-size:18px;font-weight:950;letter-spacing:-.6px}
+.role{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
 
-    .sectionTitle{font-size:12px;text-transform:uppercase;letter-spacing:.9px;font-weight:900;color:var(--muted);margin-bottom:10px}
-    .big{font-size:18px;font-weight:950;letter-spacing:-.6px;margin-top:6px}
-    .line{height:1px;background:var(--line);margin:14px 0}
+.club{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:600;
+}
 
-    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 12px;border-radius:999px;display:none;font-size:13px;font-weight:750}
-    input[type=file]{display:none}
+.page{
+  max-width:1200px;
+  margin:auto;
+  padding:40px 24px 80px;
+}
 
-    /* DEBUG banner so you can SEE if messages arrive */
-    .debugbar{
-      position:fixed;top:10px;left:50%;transform:translateX(-50%);
-      background:rgba(11,15,22,.92);color:#fff;padding:8px 12px;border-radius:999px;
-      font-size:12px;font-weight:800;z-index:9999;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
-    }
-  </style>
+.hero{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  gap:24px;
+  margin-bottom:40px;
+}
+
+.name{
+  font-size:64px;
+  font-weight:900;
+  letter-spacing:-3px;
+  line-height:0.9;
+}
+
+.subline{
+  margin-top:16px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--muted);
+}
+
+.teamTag{
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+  gap:28px;
+}
+
+@media(max-width:1000px){
+  .layout{grid-template-columns:1fr}
+  .name{font-size:44px}
+}
+
+.card{
+  border-radius:var(--radius);
+  padding:28px;
+  border:1px solid var(--line);
+}
+
+.performance{
+  background:var(--black);
+  color:var(--white);
+}
+
+.performance h3{
+  margin:0;
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  opacity:0.6;
+}
+
+.performance .value{
+  margin-top:16px;
+  font-size:42px;
+  font-weight:900;
+  letter-spacing:-2px;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-top:24px;
+}
+
+.stat{
+  border-radius:20px;
+  padding:20px;
+  background:var(--grey);
+}
+
+.statLabel{
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+}
+
+.statValue{
+  margin-top:10px;
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.avatarWrap{
+  position:relative;
+  width:120px;
+  height:120px;
+  border-radius:30px;
+  overflow:hidden;
+}
+
+.avatar{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  background:#ddd;
+}
+
+.actions{
+  margin-top:28px;
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:none;
+  border-radius:999px;
+  padding:14px 20px;
+  font-weight:800;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+
+.primary{
+  background:var(--black);
+  color:var(--white);
+}
+
+.secondary{
+  background:var(--grey);
+}
+
+button:hover{transform:translateY(-2px)}
+
+select{
+  margin-top:20px;
+  padding:14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  font-weight:800;
+  width:100%;
+  max-width:350px;
+}
+
+.sectionTitle{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:14px;
+}
+
+.alertBox{
+  background:var(--grey);
+  border-radius:24px;
+  padding:24px;
+  margin-top:20px;
+}
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--black);
+  color:#fff;
+  padding:10px 18px;
+  border-radius:999px;
+  display:none;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="topbar">
-    <div class="topinner">
-      <div class="left">
-        <div class="brand">Dashboard</div>
-        <div class="club" id="clubLine">club: —</div>
-      </div>
-      <div class="right">
-        <div class="switch" id="kidWrap">
-          <select id="kidSelect"></select>
-        </div>
-        <div class="chip">
-          <span id="roleText">Role: —</span>
-          <span class="dot">•</span>
-          <span id="today">—</span>
-        </div>
-      </div>
+<div class="top">
+  <div>
+    <div class="role" id="roleText">—</div>
+    <div class="club" id="clubText">—</div>
+  </div>
+  <div id="today"></div>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div>
+      <div class="name" id="athleteName">LOADING</div>
+      <div class="subline" id="playerId"></div>
     </div>
+    <div class="teamTag" id="teamName"></div>
   </div>
 
-  <div class="page">
-    <div class="hero">
-      <div>
-        <div class="heroTitle" id="pageTitle">LOADING…</div>
-        <div class="heroSub" id="playerIdLine">Waiting for data…</div>
-      </div>
-      <div class="heroSub" id="teamPill"></div>
-    </div>
+  <div class="layout">
 
-    <div class="grid">
-      <div class="panel">
-        <div class="row">
-          <div class="avatarWrap">
-            <img id="avatar" class="avatar" alt="Player" />
-            <div id="unsavedBadge" class="badge">NEW</div>
-          </div>
-          <div>
-            <div class="name" id="playerName">—</div>
-            <div class="sub" id="playerMeta">—</div>
-            <div class="team" id="teamName">Team: —</div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="primary" id="viewIdpBtn">View IDP</button>
-          <button class="ghost" id="changePhotoBtn">Change Photo</button>
-          <button class="primary disabled" id="savePhotoBtn">Save Photo</button>
-        </div>
-
-        <div class="kpis">
-          <div class="kpi">
-            <div class="kpiLabel">Jersey</div>
-            <div class="kpiValue" id="jersey">—</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiLabel">DOB</div>
-            <div class="kpiValue" id="dob">—</div>
-          </div>
-        </div>
-
-        <input id="fileInput" type="file" accept="image/*" />
+    <div>
+      <div class="card performance">
+        <h3>Next Event</h3>
+        <div class="value" id="eventType">—</div>
+        <div id="eventDetails" style="margin-top:10px;font-weight:600;"></div>
       </div>
 
-      <div class="panelSoft">
-        <div class="sectionTitle">Next Event</div>
-        <div id="evtType" class="sub">—</div>
-        <div id="evtOpp" class="big"></div>
-        <div class="line"></div>
-        <div id="evtWhen" class="sub"></div>
-        <div id="evtWhere" class="sub"></div>
+      <div class="grid2">
+        <div class="stat">
+          <div class="statLabel">Jersey</div>
+          <div class="statValue" id="jersey">—</div>
+        </div>
+        <div class="stat">
+          <div class="statLabel">DOB</div>
+          <div class="statValue" id="dob">—</div>
+        </div>
       </div>
 
-      <div class="panel" style="grid-column:1/-1;">
+      <div class="alertBox">
         <div class="sectionTitle">Alert</div>
-        <div id="alertTitle" class="sub">—</div>
-        <div id="alertMsg" class="big" style="font-size:16px;margin-top:10px;"></div>
-      </div>
-
-      <div class="panel" style="grid-column:1/-1;">
-        <div class="sectionTitle">Parent Contact</div>
-        <div id="parentEmail" class="sub">Email: —</div>
-        <div id="parentPhone" class="sub" style="margin-top:8px;">Phone: —</div>
+        <div id="alertTitle"></div>
+        <div id="alertMsg" style="margin-top:8px;font-weight:600;"></div>
       </div>
     </div>
-  </div>
 
-  <div class="toast" id="toast"></div>
+    <div>
+      <div class="avatarWrap">
+        <img id="avatar" class="avatar"/>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="viewIdpBtn">View IDP</button>
+        <button class="secondary" id="changePhotoBtn">Change Photo</button>
+        <button class="primary" id="savePhotoBtn" style="display:none;">Save Photo</button>
+      </div>
+
+      <select id="kidSelect" style="display:none;"></select>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-  let state = null;
-  let pendingDataUrl = null;
-  let saving = false;
+let state=null;
+let pendingDataUrl=null;
 
-  const debugbar = document.getElementById("debugbar");
-
-  function setDebug(text){
-    debugbar.textContent = text;
-  }
-
-  function post(type, payload={}){
-    window.parent.postMessage({ type, payload }, "*");
-  }
-
-  function toast(msg){
-    const t = document.getElementById("toast");
-    t.textContent = msg || "";
-    t.style.display = msg ? "block" : "none";
-    clearTimeout(window.__toastTimer);
-    if(msg) window.__toastTimer = setTimeout(()=> t.style.display="none", 1800);
-  }
-
-  function setText(id, v){ document.getElementById(id).textContent = v ?? ""; }
-  function setDisabled(btn, disabled){ disabled ? btn.classList.add("disabled") : btn.classList.remove("disabled"); }
-  function showUnsaved(flag){ document.getElementById("unsavedBadge").style.display = flag ? "block" : "none"; }
-
-  function render(){
-    if(!state) return;
-
-    setText("clubLine", state.clubSlug ? `club: ${state.clubSlug}` : "club: —");
-    setText("roleText", state.role ? `Role: ${state.role}` : "Role: —");
-    setText("today", state.today || "");
-
-    const p = state.player || {};
-    const fullName = `${p.firstName||""} ${p.lastName||""}`.trim() || "Player";
-
-    setText("pageTitle", fullName.toUpperCase());
-    setText("playerName", fullName);
-    setText("playerIdLine", p.id ? `Player ID: ${p.id}` : "");
-    setText("playerMeta", "Loaded ✅");
-
-    const team = state.team || {};
-    setText("teamName", team.name ? `Team: ${team.name}` : "Team: —");
-    setText("teamPill", team.name ? team.name : "");
-
-    setText("jersey", p.jerseyNumber ? `#${p.jerseyNumber}` : "—");
-    setText("dob", p.dob || "—");
-
-    document.getElementById("avatar").src = p.photoUrl || "";
-
-    const evt = state.nextEvent;
-    if(!evt){
-      setText("evtType", "No upcoming events");
-      setText("evtOpp", "");
-      setText("evtWhen", "");
-      setText("evtWhere", "");
-    } else {
-      const type = evt.type || "";
-      setText("evtType", type);
-      setText("evtOpp", (type.toLowerCase()==="game" && evt.opponent) ? `VS ${evt.opponent}` : "");
-      setText("evtWhen", `${evt.date || ""}${evt.time ? " • " + evt.time : ""}`.trim());
-      setText("evtWhere", evt.location || "");
-    }
-
-    const a = state.alert;
-    setText("alertTitle", a?.title ? a.title : "No active alerts");
-    setText("alertMsg", a?.message || "");
-
-    setText("parentEmail", state.parent?.email ? `Email: ${state.parent.email}` : "Email: —");
-    setText("parentPhone", state.parent?.phone ? `Phone: ${state.parent.phone}` : "Phone: —");
-
-    const kids = state.kids || [];
-    const wrap = document.getElementById("kidWrap");
-    const sel = document.getElementById("kidSelect");
-
-    if(state.role === "Parent" && kids.length > 0){
-      wrap.style.display = "block";
-      sel.innerHTML = kids.map(k => {
-        const selected = (k.id === state.activePlayerId) ? "selected" : "";
-        return `<option value="${k.id}" ${selected}>${k.name}</option>`;
-      }).join("");
-    } else {
-      wrap.style.display = "none";
-    }
-  }
-
-  async function compressToDataUrl(file){
-    const bmp = await createImageBitmap(file);
-    const max = 640;
-    const scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
-    const w = Math.round(bmp.width * scale);
-    const h = Math.round(bmp.height * scale);
-    const canvas = document.createElement("canvas");
-    canvas.width = w; canvas.height = h;
-    canvas.getContext("2d").drawImage(bmp, 0, 0, w, h);
-    return canvas.toDataURL("image/jpeg", 0.82);
-  }
-
-  // RECEIVE from Wix
-  window.addEventListener("message", (event) => {
-    const msg = event.data || {};
-if (msg.type === "STATE") {
-  state = msg.payload;
-  render();
+function post(type,payload={}){
+  window.parent.postMessage({type,payload},"*");
 }
-    }
-    if (msg.type === "TOAST") toast(msg.payload?.message || "");
-    if (msg.type === "PHOTO_SAVED") {
-      saving = false;
-      if (msg.payload?.ok) {
-        pendingDataUrl = null;
-        showUnsaved(false);
-        setDisabled(document.getElementById("savePhotoBtn"), true);
-        toast("Photo saved ✅");
-      } else {
-        toast(msg.payload?.message || "Couldn’t save photo.");
-        setDisabled(document.getElementById("savePhotoBtn"), false);
-      }
-    }
-  });
 
-  // SEND to Wix
-  document.getElementById("viewIdpBtn").addEventListener("click", () => post("VIEW_IDP", {}));
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.innerText=msg;
+  t.style.display="block";
+  setTimeout(()=>t.style.display="none",2000);
+}
 
-  document.getElementById("kidSelect").addEventListener("change", (e) => {
-    pendingDataUrl = null;
-    showUnsaved(false);
-    setDisabled(document.getElementById("savePhotoBtn"), true);
-    post("SELECT_KID", { playerId: e.target.value });
-  });
+function render(){
+  if(!state)return;
+  const p=state.player||{};
+  document.getElementById("athleteName").innerText=
+    (p.firstName||"")+" "+(p.lastName||"");
+  document.getElementById("playerId").innerText=
+    p.id?`Player ID: ${p.id}`:"";
+  document.getElementById("roleText").innerText=state.role||"";
+  document.getElementById("clubText").innerText=state.clubSlug||"";
+  document.getElementById("today").innerText=state.today||"";
+  document.getElementById("teamName").innerText=state.team?.name||"";
+  document.getElementById("jersey").innerText=p.jerseyNumber?`#${p.jerseyNumber}`:"—";
+  document.getElementById("dob").innerText=p.dob||"—";
+  document.getElementById("avatar").src=p.photoUrl||"";
 
-  document.getElementById("changePhotoBtn").addEventListener("click", () => {
-    document.getElementById("fileInput").click();
-  });
-
-  document.getElementById("fileInput").addEventListener("change", async (e) => {
-    try{
-      const file = e.target.files?.[0];
-      if(!file) return;
-      toast("Processing…");
-      const dataUrl = await compressToDataUrl(file);
-      pendingDataUrl = dataUrl;
-      showUnsaved(true);
-      document.getElementById("avatar").src = dataUrl;
-      setDisabled(document.getElementById("savePhotoBtn"), false);
-      toast("Ready to save");
-    }catch(err){
-      console.error(err);
-      toast("Couldn’t process photo.");
-    }
-  });
-
-  document.getElementById("savePhotoBtn").addEventListener("click", () => {
-    if (saving) return;
-    if (!pendingDataUrl) return;
-    if (!state?.activePlayerId) return toast("No player selected.");
-    saving = true;
-    setDisabled(document.getElementById("savePhotoBtn"), true);
-    toast("Saving…");
-    post("SAVE_PHOTO_DATAURL", { playerId: state.activePlayerId, dataUrl: pendingDataUrl });
-  });
-
-  // HANDSHAKE (this is what triggers Wix to send STATE)
-  function readyPing(){
-    setDebug("PING: sending IFRAME_READY…");
-    post("IFRAME_READY", {});
+  const evt=state.nextEvent;
+  if(!evt){
+    document.getElementById("eventType").innerText="No Upcoming Event";
+    document.getElementById("eventDetails").innerText="";
+  }else{
+    document.getElementById("eventType").innerText=evt.type||"";
+    document.getElementById("eventDetails").innerText=
+      `${evt.opponent? "vs "+evt.opponent:""} ${evt.date||""} ${evt.time||""}`;
   }
-  window.addEventListener("load", () => {
-    readyPing();
-    setTimeout(readyPing, 600);
-    setTimeout(readyPing, 1500);
-    setTimeout(readyPing, 3000);
-  });
-  readyPing();
-  setTimeout(readyPing, 600);
-  setTimeout(readyPing, 1500);
+
+  document.getElementById("alertTitle").innerText=state.alert?.title||"No alerts";
+  document.getElementById("alertMsg").innerText=state.alert?.message||"";
+
+  const kids=state.kids||[];
+  const sel=document.getElementById("kidSelect");
+  if(state.role==="Parent"&&kids.length){
+    sel.style.display="block";
+    sel.innerHTML=kids.map(k=>
+      `<option value="${k.id}" ${k.id===state.activePlayerId?"selected":""}>${k.name}</option>`
+    ).join("");
+  }
+}
+
+window.addEventListener("message",(event)=>{
+  const msg=event.data||{};
+  if(msg.type==="STATE"){
+    state=msg.payload;
+    render();
+  }
+  if(msg.type==="TOAST")toast(msg.payload?.message||"");
+});
+
+document.getElementById("viewIdpBtn")
+  .addEventListener("click",()=>post("VIEW_IDP",{}));
+
+document.getElementById("kidSelect")
+  .addEventListener("change",(e)=>
+    post("SELECT_KID",{playerId:e.target.value})
+  );
+
+window.addEventListener("load",()=>{
+  post("IFRAME_READY",{});
+  setTimeout(()=>post("IFRAME_READY",{}),800);
+});
 </script>
 </body>
 </html>
