@@ -3,225 +3,261 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Athlete Profile</title>
+<title>Elite Academy Profile</title>
 
 <style>
 :root{
-  --black:#000;
-  --white:#fff;
-  --grey:#f4f4f4;
-  --muted:#8a8a8a;
-  --line:#e5e5e5;
-  --radius:28px;
+  --bg:#0b0d10;
+  --panel:#0f1217;
+  --panel2:#111621;
+  --ink:#ffffff;
+  --muted:rgba(255,255,255,.62);
+  --line:rgba(255,255,255,.10);
+  --soft:rgba(255,255,255,.06);
+  --accent:#ffffff; /* keep neutral elite */
+  --radius:26px;
 }
 
 *{box-sizing:border-box}
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  background:var(--white);
-  color:var(--black);
+  background:
+    radial-gradient(900px 500px at 15% 0%, rgba(255,255,255,.08), transparent 55%),
+    radial-gradient(900px 500px at 85% 0%, rgba(255,255,255,.06), transparent 55%),
+    var(--bg);
+  color:var(--ink);
   -webkit-font-smoothing:antialiased;
 }
 
 .top{
-  padding:18px 24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  position:sticky;top:0;z-index:10;
+  backdrop-filter: blur(14px);
+  background: rgba(11,13,16,.72);
   border-bottom:1px solid var(--line);
 }
 
-.role{
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:1px;
-  text-transform:uppercase;
+.topInner{
+  max-width:1200px;margin:0 auto;
+  padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;
 }
 
-.club{
+.kicker{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+  opacity:.95;
+}
+
+.subkicker{
+  margin-top:6px;
   font-size:12px;
   color:var(--muted);
-  font-weight:600;
+  font-weight:650;
+}
+
+.pill{
+  display:flex;gap:10px;align-items:center;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
 }
 
 .page{
   max-width:1200px;
-  margin:auto;
-  padding:40px 24px 80px;
+  margin:0 auto;
+  padding:34px 20px 80px;
 }
 
 .hero{
   display:flex;
   justify-content:space-between;
   align-items:flex-end;
+  gap:18px;
   flex-wrap:wrap;
-  gap:24px;
-  margin-bottom:40px;
+  margin-bottom:22px;
 }
 
 .name{
-  font-size:64px;
-  font-weight:900;
-  letter-spacing:-3px;
-  line-height:0.9;
+  font-size:58px;
+  font-weight:950;
+  letter-spacing:-2.8px;
+  line-height:.92;
 }
 
-.subline{
-  margin-top:16px;
-  font-size:14px;
-  font-weight:600;
+.metaLine{
+  margin-top:12px;
+  font-size:13px;
   color:var(--muted);
+  font-weight:650;
 }
 
 .teamTag{
-  font-size:14px;
-  font-weight:800;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  font-size:12px;
+  font-weight:900;
   letter-spacing:1px;
   text-transform:uppercase;
 }
 
 .layout{
   display:grid;
-  grid-template-columns:1.2fr 0.8fr;
-  gap:28px;
+  grid-template-columns:1.25fr .75fr;
+  gap:18px;
 }
 
-@media(max-width:1000px){
+@media(max-width:980px){
   .layout{grid-template-columns:1fr}
-  .name{font-size:44px}
+  .name{font-size:42px}
 }
 
 .card{
-  border-radius:var(--radius);
-  padding:28px;
   border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:rgba(255,255,255,.03);
+  padding:20px;
 }
 
-.performance{
-  background:var(--black);
-  color:var(--white);
+.cardStrong{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
 }
 
-.performance h3{
-  margin:0;
-  font-size:14px;
-  font-weight:800;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  opacity:0.6;
-}
-
-.performance .value{
-  margin-top:16px;
-  font-size:42px;
+.sectionTitle{
+  font-size:11px;
   font-weight:900;
-  letter-spacing:-2px;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.big{
+  margin-top:14px;
+  font-size:34px;
+  font-weight:950;
+  letter-spacing:-1.8px;
+  line-height:1.05;
+}
+
+.sub{
+  margin-top:10px;
+  font-size:13px;
+  color:var(--muted);
+  font-weight:650;
 }
 
 .grid2{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:18px;
-  margin-top:24px;
+  gap:12px;
+  margin-top:12px;
 }
 
 .stat{
-  border-radius:20px;
-  padding:20px;
-  background:var(--grey);
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:16px;
 }
 
 .statLabel{
-  font-size:12px;
-  font-weight:700;
+  font-size:11px;
   color:var(--muted);
+  font-weight:750;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
 
 .statValue{
   margin-top:10px;
   font-size:22px;
-  font-weight:900;
+  font-weight:950;
   letter-spacing:-1px;
 }
 
+.rightCol{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
 .avatarWrap{
-  position:relative;
-  width:120px;
-  height:120px;
-  border-radius:30px;
+  width:132px;height:132px;
+  border-radius:32px;
   overflow:hidden;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
 }
 
 .avatar{
-  width:100%;
-  height:100%;
+  width:100%;height:100%;
   object-fit:cover;
-  background:#ddd;
+  display:block;
+  background:#1a1f28;
 }
 
 .actions{
-  margin-top:28px;
   display:flex;
-  gap:14px;
+  gap:10px;
   flex-wrap:wrap;
 }
 
 button{
   border:none;
   border-radius:999px;
-  padding:14px 20px;
-  font-weight:800;
-  letter-spacing:0.5px;
+  padding:12px 16px;
+  font-weight:900;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  font-size:12px;
   cursor:pointer;
-  transition:all .15s ease;
+  transition:transform .12s ease, opacity .2s ease;
 }
 
+button:hover{transform:translateY(-1px)}
 .primary{
-  background:var(--black);
-  color:var(--white);
+  background:#fff;color:#000;
 }
-
-.secondary{
-  background:var(--grey);
+.ghost{
+  background:transparent;
+  border:1px solid var(--line);
+  color:#fff;
 }
-
-button:hover{transform:translateY(-2px)}
-
 select{
-  margin-top:20px;
-  padding:14px;
+  width:100%;
+  padding:12px 14px;
   border-radius:999px;
   border:1px solid var(--line);
-  font-weight:800;
-  width:100%;
-  max-width:350px;
+  background:rgba(255,255,255,.04);
+  color:#fff;
+  font-weight:850;
+  outline:none;
 }
+select:focus{box-shadow:0 0 0 4px rgba(255,255,255,.08)}
 
-.sectionTitle{
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  margin-bottom:14px;
-}
-
-.alertBox{
-  background:var(--grey);
-  border-radius:24px;
-  padding:24px;
-  margin-top:20px;
+.hr{
+  height:1px;background:var(--line);margin:14px 0;
 }
 
 .toast{
   position:fixed;
-  bottom:20px;
-  left:50%;
+  bottom:18px;left:50%;
   transform:translateX(-50%);
-  background:var(--black);
-  color:#fff;
-  padding:10px 18px;
+  background:#fff;color:#000;
+  padding:10px 14px;
   border-radius:999px;
+  font-weight:850;
   display:none;
 }
 </style>
@@ -230,143 +266,189 @@ select{
 <body>
 
 <div class="top">
-  <div>
-    <div class="role" id="roleText">—</div>
-    <div class="club" id="clubText">—</div>
+  <div class="topInner">
+    <div>
+      <div class="kicker" id="roleText">—</div>
+      <div class="subkicker" id="clubText">—</div>
+    </div>
+    <div class="pill">
+      <span id="today">—</span>
+    </div>
   </div>
-  <div id="today"></div>
 </div>
 
 <div class="page">
-
   <div class="hero">
     <div>
       <div class="name" id="athleteName">LOADING</div>
-      <div class="subline" id="playerId"></div>
+      <div class="metaLine" id="playerIdLine"></div>
     </div>
-    <div class="teamTag" id="teamName"></div>
+    <div class="teamTag" id="teamName">—</div>
   </div>
 
   <div class="layout">
-
     <div>
-      <div class="card performance">
-        <h3>Next Event</h3>
-        <div class="value" id="eventType">—</div>
-        <div id="eventDetails" style="margin-top:10px;font-weight:600;"></div>
+      <div class="card cardStrong">
+        <div class="sectionTitle">Next Event</div>
+        <div class="big" id="eventType">—</div>
+        <div class="sub" id="eventDetails"></div>
+
+        <div class="grid2">
+          <div class="stat">
+            <div class="statLabel">Jersey</div>
+            <div class="statValue" id="jersey">—</div>
+          </div>
+          <div class="stat">
+            <div class="statLabel">DOB</div>
+            <div class="statValue" id="dob">—</div>
+          </div>
+        </div>
       </div>
 
-      <div class="grid2">
-        <div class="stat">
-          <div class="statLabel">Jersey</div>
-          <div class="statValue" id="jersey">—</div>
-        </div>
-        <div class="stat">
-          <div class="statLabel">DOB</div>
-          <div class="statValue" id="dob">—</div>
-        </div>
-      </div>
-
-      <div class="alertBox">
+      <div class="card" style="margin-top:12px;">
         <div class="sectionTitle">Alert</div>
-        <div id="alertTitle"></div>
-        <div id="alertMsg" style="margin-top:8px;font-weight:600;"></div>
+        <div class="big" id="alertTitle" style="font-size:22px;margin-top:12px;">—</div>
+        <div class="sub" id="alertMsg"></div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <div class="sectionTitle">Parent Contact</div>
+        <div class="sub" id="parentEmail" style="margin-top:12px;">Email: —</div>
+        <div class="sub" id="parentPhone">Phone: —</div>
       </div>
     </div>
 
-    <div>
-      <div class="avatarWrap">
-        <img id="avatar" class="avatar"/>
+    <div class="rightCol">
+      <div class="card">
+        <div class="sectionTitle">Profile</div>
+        <div style="display:flex;gap:14px;align-items:center;margin-top:14px;">
+          <div class="avatarWrap">
+            <img id="avatar" class="avatar" alt="Athlete"/>
+          </div>
+          <div style="flex:1;">
+            <div class="sub" style="margin:0;color:var(--muted);">Elite Academy Profile</div>
+            <div class="hr"></div>
+            <div class="actions">
+              <button class="primary" id="viewIdpBtn">View IDP</button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="actions">
-        <button class="primary" id="viewIdpBtn">View IDP</button>
-        <button class="secondary" id="changePhotoBtn">Change Photo</button>
-        <button class="primary" id="savePhotoBtn" style="display:none;">Save Photo</button>
+      <div class="card">
+        <div class="sectionTitle">Switch Athlete</div>
+        <div class="sub" style="margin-top:10px;">Parents can change between linked athletes.</div>
+        <div style="margin-top:14px;">
+          <select id="kidSelect" style="display:none;"></select>
+        </div>
       </div>
-
-      <select id="kidSelect" style="display:none;"></select>
     </div>
-
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-let state=null;
-let pendingDataUrl=null;
+let state = null;
 
-function post(type,payload={}){
-  window.parent.postMessage({type,payload},"*");
+function post(type, payload = {}) {
+  window.parent.postMessage({ type, payload }, "*");
 }
 
 function toast(msg){
-  const t=document.getElementById("toast");
-  t.innerText=msg;
-  t.style.display="block";
-  setTimeout(()=>t.style.display="none",2000);
+  const t = document.getElementById("toast");
+  t.textContent = msg || "";
+  t.style.display = msg ? "block" : "none";
+  clearTimeout(window.__toastTimer);
+  if(msg) window.__toastTimer = setTimeout(()=>t.style.display="none", 1800);
+}
+
+function setText(id, v){
+  const el = document.getElementById(id);
+  if(el) el.textContent = v ?? "";
 }
 
 function render(){
-  if(!state)return;
-  const p=state.player||{};
-  document.getElementById("athleteName").innerText=
-    (p.firstName||"")+" "+(p.lastName||"");
-  document.getElementById("playerId").innerText=
-    p.id?`Player ID: ${p.id}`:"";
-  document.getElementById("roleText").innerText=state.role||"";
-  document.getElementById("clubText").innerText=state.clubSlug||"";
-  document.getElementById("today").innerText=state.today||"";
-  document.getElementById("teamName").innerText=state.team?.name||"";
-  document.getElementById("jersey").innerText=p.jerseyNumber?`#${p.jerseyNumber}`:"—";
-  document.getElementById("dob").innerText=p.dob||"—";
-  document.getElementById("avatar").src=p.photoUrl||"";
+  if(!state) return;
 
-  const evt=state.nextEvent;
+  const p = state.player || {};
+  const fullName = `${p.firstName||""} ${p.lastName||""}`.trim() || "Athlete";
+
+  setText("athleteName", fullName.toUpperCase());
+  setText("playerIdLine", p.id ? `Player ID: ${p.id}` : "");
+
+  setText("roleText", state.role ? `ROLE: ${state.role}` : "—");
+  setText("clubText", state.clubSlug ? `CLUB: ${state.clubSlug}` : "—");
+  setText("today", state.today || "—");
+
+  setText("teamName", state.team?.name ? state.team.name : "—");
+
+  setText("jersey", p.jerseyNumber ? `#${p.jerseyNumber}` : "—");
+  setText("dob", p.dob || "—");
+
+  document.getElementById("avatar").src = p.photoUrl || "";
+
+  const evt = state.nextEvent;
   if(!evt){
-    document.getElementById("eventType").innerText="No Upcoming Event";
-    document.getElementById("eventDetails").innerText="";
-  }else{
-    document.getElementById("eventType").innerText=evt.type||"";
-    document.getElementById("eventDetails").innerText=
-      `${evt.opponent? "vs "+evt.opponent:""} ${evt.date||""} ${evt.time||""}`;
+    setText("eventType", "NO UPCOMING EVENT");
+    setText("eventDetails", "");
+  } else {
+    setText("eventType", (evt.type || "").toUpperCase());
+    const opp = evt.opponent ? `vs ${evt.opponent}` : "";
+    const when = `${evt.date || ""}${evt.time ? " • " + evt.time : ""}`.trim();
+    const where = evt.location ? ` • ${evt.location}` : "";
+    setText("eventDetails", `${opp}${opp && when ? " • " : ""}${when}${where}`.trim());
   }
 
-  document.getElementById("alertTitle").innerText=state.alert?.title||"No alerts";
-  document.getElementById("alertMsg").innerText=state.alert?.message||"";
+  setText("alertTitle", state.alert?.title || "NO ACTIVE ALERTS");
+  setText("alertMsg", state.alert?.message || "");
 
-  const kids=state.kids||[];
-  const sel=document.getElementById("kidSelect");
-  if(state.role==="Parent"&&kids.length){
-    sel.style.display="block";
-    sel.innerHTML=kids.map(k=>
-      `<option value="${k.id}" ${k.id===state.activePlayerId?"selected":""}>${k.name}</option>`
-    ).join("");
+  setText("parentEmail", state.parent?.email ? `Email: ${state.parent.email}` : "Email: —");
+  setText("parentPhone", state.parent?.phone ? `Phone: ${state.parent.phone}` : "Phone: —");
+
+  const kids = state.kids || [];
+  const sel = document.getElementById("kidSelect");
+  if(state.role === "Parent" && kids.length > 0){
+    sel.style.display = "block";
+    sel.innerHTML = kids.map(k=>{
+      const selected = (k.id === state.activePlayerId) ? "selected" : "";
+      return `<option value="${k.id}" ${selected}>${k.name}</option>`;
+    }).join("");
+  } else {
+    sel.style.display = "none";
   }
 }
 
-window.addEventListener("message",(event)=>{
-  const msg=event.data||{};
-  if(msg.type==="STATE"){
-    state=msg.payload;
+window.addEventListener("message", (event) => {
+  const msg = event.data || {};
+  if(msg.type === "STATE"){
+    state = msg.payload;
     render();
   }
-  if(msg.type==="TOAST")toast(msg.payload?.message||"");
+  if(msg.type === "TOAST"){
+    toast(msg.payload?.message || "");
+  }
 });
 
-document.getElementById("viewIdpBtn")
-  .addEventListener("click",()=>post("VIEW_IDP",{}));
-
-document.getElementById("kidSelect")
-  .addEventListener("change",(e)=>
-    post("SELECT_KID",{playerId:e.target.value})
-  );
-
-window.addEventListener("load",()=>{
-  post("IFRAME_READY",{});
-  setTimeout(()=>post("IFRAME_READY",{}),800);
+document.getElementById("viewIdpBtn").addEventListener("click", () => {
+  post("VIEW_IDP", {});
 });
+
+document.getElementById("kidSelect").addEventListener("change", (e) => {
+  post("SELECT_KID", { playerId: e.target.value });
+});
+
+function readyPing(){
+  post("IFRAME_READY", {});
+}
+
+window.addEventListener("load", () => {
+  readyPing();
+  setTimeout(readyPing, 600);
+  setTimeout(readyPing, 1500);
+});
+readyPing();
 </script>
+
 </body>
 </html>
