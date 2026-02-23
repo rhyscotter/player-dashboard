@@ -14,7 +14,6 @@
   --muted:rgba(255,255,255,.62);
   --line:rgba(255,255,255,.10);
   --soft:rgba(255,255,255,.06);
-  --accent:#ffffff; /* keep neutral elite */
   --radius:26px;
 }
 
@@ -198,6 +197,7 @@ body{
   overflow:hidden;
   border:1px solid var(--line);
   background:rgba(255,255,255,.05);
+  position:relative;
 }
 
 .avatar{
@@ -205,6 +205,21 @@ body{
   object-fit:cover;
   display:block;
   background:#1a1f28;
+}
+
+.badge{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  background:#fff;
+  color:#000;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  display:none;
 }
 
 .actions{
@@ -234,6 +249,11 @@ button:hover{transform:translateY(-1px)}
   border:1px solid var(--line);
   color:#fff;
 }
+.disabled{
+  opacity:.45;
+  pointer-events:none;
+}
+
 select{
   width:100%;
   padding:12px 14px;
@@ -260,6 +280,8 @@ select:focus{box-shadow:0 0 0 4px rgba(255,255,255,.08)}
   font-weight:850;
   display:none;
 }
+
+input[type=file]{display:none}
 </style>
 </head>
 
@@ -324,15 +346,20 @@ select:focus{box-shadow:0 0 0 4px rgba(255,255,255,.08)}
         <div style="display:flex;gap:14px;align-items:center;margin-top:14px;">
           <div class="avatarWrap">
             <img id="avatar" class="avatar" alt="Athlete"/>
+            <div id="unsavedBadge" class="badge">NEW</div>
           </div>
           <div style="flex:1;">
             <div class="sub" style="margin:0;color:var(--muted);">Elite Academy Profile</div>
             <div class="hr"></div>
             <div class="actions">
               <button class="primary" id="viewIdpBtn">View IDP</button>
+              <button class="ghost" id="changePhotoBtn">Change Photo</button>
+              <button class="primary disabled" id="savePhotoBtn">Save Photo</button>
             </div>
           </div>
         </div>
+
+        <input id="fileInput" type="file" accept="image/*"/>
       </div>
 
       <div class="card">
@@ -350,6 +377,8 @@ select:focus{box-shadow:0 0 0 4px rgba(255,255,255,.08)}
 
 <script>
 let state = null;
+let pendingDataUrl = null;
+let saving = false;
 
 function post(type, payload = {}) {
   window.parent.postMessage({ type, payload }, "*");
@@ -366,6 +395,28 @@ function toast(msg){
 function setText(id, v){
   const el = document.getElementById(id);
   if(el) el.textContent = v ?? "";
+}
+
+function setDisabled(id, disabled){
+  const btn = document.getElementById(id);
+  if(!btn) return;
+  disabled ? btn.classList.add("disabled") : btn.classList.remove("disabled");
+}
+
+function showUnsaved(flag){
+  const b = document.getElementById("unsavedBadge");
+  if(b) b.style.display = flag ? "block" : "none";
+}
+
+function getActivePlayerId(){
+  return state?.activePlayerId || state?.player?.id || "";
+}
+
+function resetPhotoUI(){
+  pendingDataUrl = null;
+  saving = false;
+  showUnsaved(false);
+  setDisabled("savePhotoBtn", true);
 }
 
 function render(){
@@ -386,7 +437,10 @@ function render(){
   setText("jersey", p.jerseyNumber ? `#${p.jerseyNumber}` : "—");
   setText("dob", p.dob || "—");
 
-  document.getElementById("avatar").src = p.photoUrl || "";
+  // Only overwrite avatar from STATE if we are NOT previewing a new one
+  if(!pendingDataUrl){
+    document.getElementById("avatar").src = p.photoUrl || "";
+  }
 
   const evt = state.nextEvent;
   if(!evt){
@@ -419,14 +473,63 @@ function render(){
   }
 }
 
+/** Convert selected image file to a reasonably-sized JPEG dataURL */
+function fileToDataUrl(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("READ_FAILED"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 900; // keep it light for postMessage + backend
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.86);
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error("IMG_FAILED"));
+      img.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 window.addEventListener("message", (event) => {
   const msg = event.data || {};
+
   if(msg.type === "STATE"){
     state = msg.payload;
     render();
+    return;
   }
+
   if(msg.type === "TOAST"){
     toast(msg.payload?.message || "");
+    return;
+  }
+
+  // Optional: if your Wix page code posts PHOTO_SAVED, we handle it
+  if(msg.type === "PHOTO_SAVED"){
+    const ok = !!msg.payload?.ok;
+    if(ok){
+      toast("Photo saved");
+      resetPhotoUI();
+      // If Wix also sends updated STATE, great; if not, we still keep preview cleared.
+      if(msg.payload?.url && document.getElementById("avatar")){
+        document.getElementById("avatar").src = msg.payload.url;
+      }
+    } else {
+      toast(msg.payload?.message || "Upload failed");
+      saving = false;
+      setDisabled("savePhotoBtn", false);
+    }
   }
 });
 
@@ -435,7 +538,48 @@ document.getElementById("viewIdpBtn").addEventListener("click", () => {
 });
 
 document.getElementById("kidSelect").addEventListener("change", (e) => {
+  resetPhotoUI();
   post("SELECT_KID", { playerId: e.target.value });
+});
+
+document.getElementById("changePhotoBtn").addEventListener("click", () => {
+  const input = document.getElementById("fileInput");
+  if(input) input.click();
+});
+
+document.getElementById("fileInput").addEventListener("change", async (e) => {
+  try{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+
+    toast("Preparing photo…");
+    const dataUrl = await fileToDataUrl(file);
+
+    pendingDataUrl = dataUrl;
+
+    // preview
+    document.getElementById("avatar").src = dataUrl;
+
+    showUnsaved(true);
+    setDisabled("savePhotoBtn", false);
+    toast("Ready to save");
+  } catch(err){
+    console.log(err);
+    toast("Couldn’t read that image");
+  }
+});
+
+document.getElementById("savePhotoBtn").addEventListener("click", () => {
+  if(saving) return;
+  const pid = getActivePlayerId();
+  if(!pid) return toast("No player selected");
+  if(!pendingDataUrl) return toast("Choose a photo first");
+
+  saving = true;
+  setDisabled("savePhotoBtn", true);
+  toast("Saving…");
+
+  post("SAVE_PHOTO_DATAURL", { playerId: pid, dataUrl: pendingDataUrl });
 });
 
 function readyPing(){
