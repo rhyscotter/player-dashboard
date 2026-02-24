@@ -169,7 +169,7 @@ input[type=file]{display:none}
 
     </div>
 
-    <!-- RIGHT COLUMN (MOVED HERE) -->
+    <!-- RIGHT COLUMN -->
     <div>
 
       <!-- PROFILE (TOP) -->
@@ -178,7 +178,7 @@ input[type=file]{display:none}
 
         <div style="display:flex;gap:12px;align-items:center;margin-top:12px;">
           <div class="avatarWrap">
-            <img id="avatar" class="avatar"/>
+            <img id="avatar" class="avatar" />
             <div id="unsavedBadge" class="badge">NEW</div>
           </div>
 
@@ -191,7 +191,7 @@ input[type=file]{display:none}
           </div>
         </div>
 
-        <input id="fileInput" type="file" accept="image/*"/>
+        <input id="fileInput" type="file" accept="image/*" />
       </div>
 
       <!-- SWITCH PLAYER (BELOW PROFILE) -->
@@ -209,85 +209,177 @@ input[type=file]{display:none}
 <div class="toast" id="toast"></div>
 
 <script>
-let state=null, pendingDataUrl=null, saving=false;
+let state = null;
+let pendingDataUrl = null;
+let lastSavedUrl = ""; // ✅ prevents "snap back" if STATE comes in stale
 
-function post(type,payload={}){window.parent.postMessage({type,payload},"*");}
+function post(type, payload = {}) {
+  window.parent.postMessage({ type, payload }, "*");
+}
 
 function toast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg||"";t.style.display=msg?"block":"none";
-  clearTimeout(window.tt); if(msg) window.tt=setTimeout(()=>t.style.display="none",1600);
+  const t = document.getElementById("toast");
+  t.textContent = msg || "";
+  t.style.display = msg ? "block" : "none";
+  clearTimeout(window.__tt);
+  if(msg) window.__tt = setTimeout(()=>t.style.display="none", 1600);
+}
+
+function setDisabled(btnId, disabled){
+  const b = document.getElementById(btnId);
+  if(!b) return;
+  disabled ? b.classList.add("disabled") : b.classList.remove("disabled");
+}
+
+function getActivePlayerId(){
+  // ✅ supports Parent + Player roles safely
+  return (state?.activePlayerId || state?.player?.id || "").trim();
 }
 
 function render(){
   if(!state) return;
-  const p=state.player||{};
-  document.getElementById("athleteName").textContent=
-    ((p.firstName||"")+" "+(p.lastName||"")).trim().toUpperCase()||"ATHLETE";
 
-  document.getElementById("roleText").textContent="ROLE: "+(state.role||"—");
-  document.getElementById("clubText").textContent="CLUB: "+(state.clubSlug||"—");
-  document.getElementById("today").textContent=state.today||"—";
-  document.getElementById("teamName").textContent=state.team?.name||"—";
-  document.getElementById("jersey").textContent=p.jerseyNumber?"#"+p.jerseyNumber:"—";
-  document.getElementById("dob").textContent=p.dob||"—";
+  const p = state.player || {};
+  const fullName = ((p.firstName||"")+" "+(p.lastName||"")).trim();
+  document.getElementById("athleteName").textContent = (fullName || "ATHLETE").toUpperCase();
 
-  if(!pendingDataUrl) document.getElementById("avatar").src=p.photoUrl||"";
+  document.getElementById("roleText").textContent = "ROLE: " + (state.role || "—");
+  document.getElementById("clubText").textContent = "CLUB: " + (state.clubSlug || "—");
+  document.getElementById("today").textContent = state.today || "—";
 
-  const evt=state.nextEvent;
-  document.getElementById("eventType").textContent=evt?evt.type:"NO EVENT";
-  document.getElementById("eventDetails").textContent=
-    evt?`${evt.opponent||""} • ${evt.date||""} ${evt.time||""}`:"";
+  document.getElementById("teamName").textContent = state.team?.name || "—";
+  document.getElementById("jersey").textContent = p.jerseyNumber ? "#" + p.jerseyNumber : "—";
+  document.getElementById("dob").textContent = p.dob || "—";
 
-  document.getElementById("alertTitle").textContent=state.alert?.title||"NO ALERTS";
-  document.getElementById("alertMsg").textContent=state.alert?.message||"";
+  // ✅ Avatar logic:
+  // - If previewing: show the preview
+  // - Else: show lastSavedUrl if present (prevents snap-back)
+  // - Else: show CMS photoUrl
+  if (pendingDataUrl) {
+    document.getElementById("avatar").src = pendingDataUrl;
+  } else if (lastSavedUrl) {
+    document.getElementById("avatar").src = lastSavedUrl;
+  } else {
+    document.getElementById("avatar").src = p.photoUrl || "";
+  }
 
-  const kids=state.kids||[];
-  const sel=document.getElementById("kidSelect");
-  if(state.role==="Parent"&&kids.length){
-    sel.style.display="block";
-    sel.innerHTML=kids.map(k=>`<option value="${k.id}" ${k.id===state.activePlayerId?"selected":""}>${k.name}</option>`).join("");
+  const evt = state.nextEvent;
+  document.getElementById("eventType").textContent = evt ? (evt.type || "EVENT") : "NO EVENT";
+  document.getElementById("eventDetails").textContent =
+    evt ? `${evt.opponent||""} • ${evt.date||""} ${evt.time||""}`.trim() : "";
+
+  document.getElementById("alertTitle").textContent = state.alert?.title || "NO ALERTS";
+  document.getElementById("alertMsg").textContent = state.alert?.message || "";
+
+  const kids = state.kids || [];
+  const sel = document.getElementById("kidSelect");
+  if (state.role === "Parent" && kids.length) {
+    sel.style.display = "block";
+    sel.innerHTML = kids.map(k =>
+      `<option value="${k.id}" ${k.id===state.activePlayerId?"selected":""}>${k.name}</option>`
+    ).join("");
+  } else {
+    sel.style.display = "none";
   }
 }
 
-window.addEventListener("message",(e)=>{
-  const m=e.data||{};
-  if(m.type==="STATE"){state=m.payload;render();}
-  if(m.type==="TOAST") toast(m.payload?.message);
-  if(m.type==="PHOTO_SAVED"){
-    if(m.payload?.ok){
+window.addEventListener("message", (e) => {
+  const m = e.data || {};
+
+  if (m.type === "STATE") {
+    state = m.payload;
+
+    // ✅ If Wix sends stale photoUrl, do NOT let it overwrite a newly saved one
+    // But if Wix does send the updated photoUrl, we can accept it and clear lastSavedUrl.
+    const cmsUrl = state?.player?.photoUrl || "";
+    if (lastSavedUrl && cmsUrl) {
+      // If they match (ignoring cache-bust), we can clear the override
+      const baseLast = lastSavedUrl.split("?")[0];
+      if (cmsUrl === baseLast) {
+        lastSavedUrl = "";
+      }
+    }
+
+    render();
+    return;
+  }
+
+  if (m.type === "TOAST") {
+    toast(m.payload?.message || "");
+    return;
+  }
+
+  if (m.type === "PHOTO_SAVED") {
+    if (m.payload?.ok) {
       toast("Saved");
-      pendingDataUrl=null;
-      document.getElementById("savePhotoBtn").classList.add("disabled");
-      document.getElementById("unsavedBadge").style.display="none";
-      document.getElementById("avatar").src=m.payload.url+"?t="+Date.now();
-    } else toast("Failed");
+
+      // ✅ Clear preview state + lock in new URL
+      pendingDataUrl = null;
+
+      // cache-bust so browser shows new image instantly
+      const url = (m.payload?.url || "").trim();
+      if (url) {
+        lastSavedUrl = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+
+        // Also update local state so render() won’t revert
+        if (state?.player) state.player.photoUrl = url;
+
+        document.getElementById("avatar").src = lastSavedUrl;
+      }
+
+      setDisabled("savePhotoBtn", true);
+      document.getElementById("unsavedBadge").style.display = "none";
+    } else {
+      toast(m.payload?.message || "Failed");
+      setDisabled("savePhotoBtn", false);
+    }
   }
 });
 
-document.getElementById("viewIdpBtn").onclick=()=>post("VIEW_IDP",{});
-document.getElementById("kidSelect").onchange=e=>post("SELECT_KID",{playerId:e.target.value});
+document.getElementById("viewIdpBtn").onclick = () => post("VIEW_IDP", {});
 
-document.getElementById("changePhotoBtn").onclick=()=>document.getElementById("fileInput").click();
+document.getElementById("kidSelect").onchange = (e) => {
+  // switching player should reset preview UI
+  pendingDataUrl = null;
+  lastSavedUrl = "";
+  setDisabled("savePhotoBtn", true);
+  document.getElementById("unsavedBadge").style.display = "none";
+  post("SELECT_KID", { playerId: e.target.value });
+};
 
-document.getElementById("fileInput").onchange=async(e)=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=()=>{
-    pendingDataUrl=r.result;
-    document.getElementById("avatar").src=pendingDataUrl;
-    document.getElementById("savePhotoBtn").classList.remove("disabled");
-    document.getElementById("unsavedBadge").style.display="block";
+document.getElementById("changePhotoBtn").onclick = () => {
+  document.getElementById("fileInput").click();
+};
+
+document.getElementById("fileInput").onchange = (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+
+  const r = new FileReader();
+  r.onload = () => {
+    pendingDataUrl = String(r.result || "");
+    document.getElementById("avatar").src = pendingDataUrl;
+
+    setDisabled("savePhotoBtn", false);
+    document.getElementById("unsavedBadge").style.display = "block";
   };
   r.readAsDataURL(f);
 };
 
-document.getElementById("savePhotoBtn").onclick=()=>{
-  if(!pendingDataUrl) return;
-  post("SAVE_PHOTO_DATAURL",{playerId:state.activePlayerId,dataUrl:pendingDataUrl});
+document.getElementById("savePhotoBtn").onclick = () => {
+  if (!pendingDataUrl) return;
+
+  const pid = getActivePlayerId();
+  if (!pid) return toast("No player selected");
+
+  setDisabled("savePhotoBtn", true);
+  toast("Saving…");
+
+  post("SAVE_PHOTO_DATAURL", { playerId: pid, dataUrl: pendingDataUrl });
 };
 
-post("IFRAME_READY",{});
+// Handshake
+post("IFRAME_READY", {});
 </script>
 
 </body>
