@@ -148,6 +148,12 @@ input[type=file]{display:none}
         <div class="big" id="eventType">—</div>
         <div class="sub" id="eventDetails"></div>
 
+        <!-- ✅ ADDED: Schedule buttons (only addition) -->
+        <div class="actions" style="margin-top:14px;">
+          <button class="ghost" id="openScheduleListBtn">Schedule (List)</button>
+          <button class="ghost" id="openScheduleCalBtn">Schedule (Calendar)</button>
+        </div>
+
         <div class="grid2">
           <div class="stat">
             <div class="statLabel">Jersey</div>
@@ -377,6 +383,14 @@ document.getElementById("savePhotoBtn").onclick = () => {
 
   post("SAVE_PHOTO_DATAURL", { playerId: pid, dataUrl: pendingDataUrl });
 };
+
+// ✅ ADDED: schedule buttons postMessage (only addition)
+document.getElementById("openScheduleListBtn")?.addEventListener("click", () => {
+  post("OPEN_SCHEDULE_LIST", {});
+});
+document.getElementById("openScheduleCalBtn")?.addEventListener("click", () => {
+  post("OPEN_SCHEDULE_CALENDAR", {});
+});
 
 // Handshake
 post("IFRAME_READY", {});
