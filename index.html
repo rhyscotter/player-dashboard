@@ -3,221 +3,429 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Elite Academy Profile</title>
+<title>Player Dashboard</title>
 
 <style>
-:root{
-  --bg:#0b0d10;
-  --ink:#ffffff;
-  --muted:rgba(255,255,255,.62);
-  --line:rgba(255,255,255,.10);
-  --radius:26px;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  background:
-    radial-gradient(900px 500px at 15% 0%, rgba(255,255,255,.08), transparent 55%),
-    radial-gradient(900px 500px at 85% 0%, rgba(255,255,255,.06), transparent 55%),
-    var(--bg);
-  color:var(--ink);
-}
-.top{
-  position:sticky;top:0;z-index:10;
-  backdrop-filter: blur(14px);
-  background: rgba(11,13,16,.72);
-  border-bottom:1px solid var(--line);
-}
-.topInner{
-  max-width:1200px;margin:0 auto;
-  padding:16px 20px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.kicker{font-size:11px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;}
-.subkicker{margin-top:6px;font-size:12px;color:var(--muted);font-weight:650;}
-.pill{
-  padding:10px 14px;border:1px solid var(--line);border-radius:999px;
-  background:rgba(255,255,255,.04);font-size:12px;font-weight:700;
-}
-.page{max-width:1200px;margin:0 auto;padding:34px 20px 80px;}
+  :root{
+    --panel:rgba(17,17,17,.88);
+    --border:rgba(255,255,255,.10);
+    --text:#fff;
+    --muted:rgba(255,255,255,.62);
 
-.hero{
-  display:flex;justify-content:space-between;align-items:flex-end;
-  margin-bottom:22px;
-}
-.name{font-size:52px;font-weight:950;letter-spacing:-2px;}
-.teamTag{
-  padding:10px 14px;border-radius:999px;border:1px solid var(--line);
-  background:rgba(255,255,255,.04);font-size:12px;font-weight:900;
-  letter-spacing:1px;text-transform:uppercase;
-}
+    /* Club theme (overridden by STATE.theme) */
+    --accent:#7B2EFF;
+    --accent2:#B266FF;
+    --clubGlow: rgba(123,46,255,.18);
 
-/* MAIN GRID */
-.layout{
-  display:grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap:18px;
-}
-@media(max-width:900px){
-  .layout{grid-template-columns:1fr}
-}
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:transparent;
+    color:var(--text);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  }
 
-.card{
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  background:rgba(255,255,255,.03);
-  padding:20px;
-}
-.cardStrong{
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-}
+  .stage{
+    min-height:100vh;
+    padding:22px;
+    background:
+      radial-gradient(1000px 600px at 20% -10%, rgba(255,255,255,.05), transparent 60%),
+      linear-gradient(180deg,#000 0%,#050505 100%);
+    position:relative;
+    overflow:hidden;
+  }
+  .stage::before{
+    content:"";
+    position:absolute; inset:-40% -20%;
+    transform:rotate(-14deg);
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.05), rgba(255,255,255,0));
+    opacity:.18;
+    pointer-events:none;
+  }
+  .stage::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(820px 540px at 82% 16%, var(--clubGlow), transparent 62%);
+    opacity:.9;
+    pointer-events:none;
+    animation:glowPulse 2.8s ease-in-out infinite;
+  }
+  @keyframes glowPulse{ 0%{opacity:.55} 50%{opacity:1} 100%{opacity:.55} }
 
-.sectionTitle{
-  font-size:11px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);
-}
-.big{margin-top:14px;font-size:28px;font-weight:950;}
-.sub{margin-top:8px;font-size:13px;color:var(--muted);}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-.stat{
-  background:rgba(255,255,255,.04);border:1px solid var(--line);
-  border-radius:22px;padding:14px;
-}
-.statLabel{font-size:11px;color:var(--muted);font-weight:750;text-transform:uppercase;}
-.statValue{margin-top:8px;font-size:20px;font-weight:950;}
+  .wrap{max-width:1120px;margin:0 auto;position:relative;z-index:2}
 
-.avatarWrap{
-  width:120px;height:120px;border-radius:30px;overflow:hidden;border:1px solid var(--line);
-  background:rgba(255,255,255,.05);position:relative;
-}
-.avatar{width:100%;height:100%;object-fit:cover;}
-.badge{
-  position:absolute;right:8px;bottom:8px;background:#fff;color:#000;
-  padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;display:none;
-}
+  .topBar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .titleBlock{min-width:240px}
+  .title{
+    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
+    font-size:52px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    line-height:1;
+    position:relative;
+    padding-bottom:10px;
+  }
+  .title::after{
+    content:"";
+    position:absolute;left:0;bottom:0;height:6px;width:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--accent), transparent);
+    animation:underlineSweep 1.8s linear infinite;
+  }
+  @keyframes underlineSweep{
+    0%{filter:brightness(1); transform:translateX(-2px)}
+    50%{filter:brightness(1.12); transform:translateX(2px)}
+    100%{filter:brightness(1); transform:translateX(-2px)}
+  }
+  .sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:6px;
+    max-width:720px;
+  }
 
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-button{
-  border:none;border-radius:999px;padding:10px 14px;
-  font-weight:900;font-size:11px;cursor:pointer;
-}
-.primary{background:#fff;color:#000;}
-.ghost{background:transparent;border:1px solid var(--line);color:#fff;}
-.disabled{opacity:.45;pointer-events:none;}
+  .pillRow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:flex-end;
+    margin-left:auto;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.14);
+    color:#fff;
+    font-weight:900;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    font-size:11px;
+  }
+  .pill strong{
+    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
+    font-size:16px;
+    letter-spacing:.8px;
+  }
+  .pillDot{
+    width:8px;height:8px;border-radius:999px;
+    background:var(--accent);
+    box-shadow:0 0 18px var(--clubGlow);
+    opacity:.92;
+  }
 
-select{
-  width:100%;padding:10px;border-radius:999px;border:1px solid var(--line);
-  background:rgba(255,255,255,.04);color:#fff;font-weight:850;
-}
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:14px;
+    margin-top:10px;
+  }
+  @media (max-width: 900px){
+    .grid{grid-template-columns:1fr}
+  }
 
-.toast{
-  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
-  background:#fff;color:#000;padding:8px 14px;border-radius:999px;font-weight:850;display:none;
-}
-input[type=file]{display:none}
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px;
+    position:relative;
+    overflow:hidden;
+  }
+  .panel::before{
+    content:"";
+    position:absolute; inset:-60% -20%;
+    transform:rotate(-12deg);
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.05), rgba(255,255,255,0));
+    opacity:.22;
+    pointer-events:none;
+  }
+  .panelInner{position:relative;z-index:2}
+
+  .h2{
+    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
+    font-size:26px;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+    margin:0;
+    padding-bottom:8px;
+    position:relative;
+  }
+  .h2::after{
+    content:"";
+    position:absolute;left:0;bottom:0;height:4px;width:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--accent), transparent);
+    transform:scaleX(.35);
+    transform-origin:left;
+    transition:.18s ease;
+    opacity:.95;
+  }
+  .panel:hover .h2::after{transform:scaleX(1)}
+
+  .card{
+    margin-top:12px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+    padding:12px;
+    position:relative;
+    overflow:hidden;
+    transition:.14s ease;
+  }
+  .card:hover{
+    background:rgba(255,255,255,.06);
+    border-color:rgba(255,255,255,.16);
+    transform:translateY(-1px);
+    box-shadow:0 0 26px var(--clubGlow);
+  }
+
+  .sectionTitle{
+    font-size:11px;
+    color:rgba(255,255,255,.62);
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.9px;
+  }
+  .big{
+    margin-top:10px;
+    font-size:26px;
+    font-weight:950;
+    letter-spacing:-.5px;
+  }
+  .small{
+    margin-top:6px;
+    font-size:12px;
+    color:rgba(255,255,255,.62);
+    line-height:1.4;
+  }
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+  @media (max-width: 520px){ .grid2{grid-template-columns:1fr} }
+
+  .stat{
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+    padding:10px;
+  }
+  .statLabel{
+    font-size:11px;
+    color:rgba(255,255,255,.62);
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.9px;
+  }
+  .statValue{
+    margin-top:8px;
+    font-size:18px;
+    font-weight:950;
+  }
+
+  .profileRow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .avatarWrap{
+    width:120px;height:120px;border-radius:22px;
+    overflow:hidden;border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.05);
+    position:relative;
+  }
+  .avatar{width:100%;height:100%;object-fit:cover;}
+  .badge{
+    position:absolute;right:8px;bottom:8px;
+    background:#fff;color:#000;
+    padding:5px 8px;border-radius:999px;
+    font-size:10px;font-weight:900;
+    display:none;
+  }
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .btn{
+    padding:12px 14px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.04);
+    color:#fff;
+    font-weight:900;
+    letter-spacing:.7px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:.14s ease;
+    position:relative;
+    overflow:hidden;
+    font-size:11px;
+  }
+  .btn::after{
+    content:"";
+    position:absolute;left:12px;right:12px;bottom:10px;height:4px;border-radius:999px;
+    background:linear-gradient(90deg, var(--accent), transparent);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:.18s ease;
+    opacity:.95;
+  }
+  .btn:hover{
+    transform:translateY(-1px);
+    background:rgba(255,255,255,.08);
+    border-color:rgba(255,255,255,.18);
+    box-shadow:0 0 28px var(--clubGlow);
+  }
+  .btn:hover::after{transform:scaleX(1)}
+  .btn:active{transform:translateY(0px) scale(.99)}
+  .btnPrimary{
+    background:rgba(255,255,255,.92);
+    color:#000;
+    border-color:rgba(255,255,255,.35);
+  }
+  .btnPrimary::after{background:linear-gradient(90deg, rgba(0,0,0,.35), transparent)}
+  .disabled{opacity:.45;pointer-events:none;}
+
+  select{
+    width:100%;
+    padding:12px 12px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.04);
+    color:#fff;
+    font-weight:900;
+    letter-spacing:.4px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#fff;
+    color:#000;
+    padding:8px 14px;
+    border-radius:999px;
+    font-weight:850;
+    display:none;
+    z-index:9999;
+  }
+
+  input[type=file]{display:none}
 </style>
 </head>
 
 <body>
+  <div class="stage">
+    <div class="wrap">
 
-<div class="top">
-  <div class="topInner">
-    <div>
-      <div class="kicker" id="roleText">—</div>
-      <div class="subkicker" id="clubText">—</div>
-    </div>
-    <div class="pill" id="today">—</div>
-  </div>
-</div>
-
-<div class="page">
-
-  <div class="hero">
-    <div class="name" id="athleteName">LOADING</div>
-    <div class="teamTag" id="teamName">—</div>
-  </div>
-
-  <div class="layout">
-
-    <!-- LEFT COLUMN -->
-    <div>
-
-      <!-- NEXT EVENT -->
-      <div class="card cardStrong">
-        <div class="sectionTitle">Next Event</div>
-        <div class="big" id="eventType">—</div>
-        <div class="sub" id="eventDetails"></div>
-
-        <!-- ✅ ADDED: Schedule buttons (only addition) -->
-        <div class="actions" style="margin-top:14px;">
-          <button class="ghost" id="openScheduleListBtn">Schedule (List)</button>
-          <button class="ghost" id="openScheduleCalBtn">Schedule (Calendar)</button>
+      <div class="topBar">
+        <div class="titleBlock">
+          <div class="title" id="athleteName">Loading</div>
+          <div class="sub" id="subLine">Your profile, schedule, alerts, and tools — in one place.</div>
         </div>
 
-        <div class="grid2">
-          <div class="stat">
-            <div class="statLabel">Jersey</div>
-            <div class="statValue" id="jersey">—</div>
-          </div>
-          <div class="stat">
-            <div class="statLabel">DOB</div>
-            <div class="statValue" id="dob">—</div>
-          </div>
+        <div class="pillRow">
+          <div class="pill"><span class="pillDot"></span><span id="roleText">ROLE: —</span></div>
+          <div class="pill"><strong id="teamName">—</strong></div>
+          <div class="pill"><span id="today">—</span></div>
         </div>
       </div>
 
-      <!-- ALERTS -->
-      <div class="card" style="margin-top:12px;">
-        <div class="sectionTitle">Alert</div>
-        <div class="big" id="alertTitle" style="font-size:20px;">—</div>
-        <div class="sub" id="alertMsg"></div>
-      </div>
+      <div class="grid">
 
-    </div>
+        <!-- LEFT: NEXT EVENT ONLY (Alert moved out) -->
+        <div class="panel">
+          <div class="panelInner">
+            <div class="h2">Next Event</div>
 
-    <!-- RIGHT COLUMN -->
-    <div>
+            <div class="card">
+              <div class="sectionTitle">Event</div>
+              <div class="big" id="eventType">—</div>
+              <div class="small" id="eventDetails"></div>
 
-      <!-- PROFILE (TOP) -->
-      <div class="card">
-        <div class="sectionTitle">Profile</div>
+              <div class="actions" style="margin-top:12px;">
+                <button class="btn" id="openScheduleListBtn" type="button">Schedule List</button>
+                <button class="btn" id="openScheduleCalBtn" type="button">Schedule Calendar</button>
+              </div>
 
-        <div style="display:flex;gap:12px;align-items:center;margin-top:12px;">
-          <div class="avatarWrap">
-            <img id="avatar" class="avatar" />
-            <div id="unsavedBadge" class="badge">NEW</div>
-          </div>
-
-          <div style="flex:1;">
-            <div class="actions">
-              <button class="primary" id="viewIdpBtn">View IDP</button>
-              <button class="ghost" id="changePhotoBtn">Change Photo</button>
-              <button class="primary disabled" id="savePhotoBtn">Save</button>
+              <div class="grid2">
+                <div class="stat">
+                  <div class="statLabel">Jersey</div>
+                  <div class="statValue" id="jersey">—</div>
+                </div>
+                <div class="stat">
+                  <div class="statLabel">DOB</div>
+                  <div class="statValue" id="dob">—</div>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
 
-        <input id="fileInput" type="file" accept="image/*" />
+        <!-- RIGHT: PROFILE -->
+        <div class="panel">
+          <div class="panelInner">
+            <div class="h2">Profile</div>
+
+            <div class="card">
+              <div class="profileRow">
+                <div class="avatarWrap">
+                  <img id="avatar" class="avatar" />
+                  <div id="unsavedBadge" class="badge">NEW</div>
+                </div>
+
+                <div style="flex:1; min-width:220px;">
+                  <div class="sectionTitle" id="clubText">CLUB: —</div>
+                  <div class="actions">
+                    <button class="btnPrimary btn" id="viewIdpBtn" type="button">View IDP</button>
+                    <button class="btn" id="changePhotoBtn" type="button">Change Photo</button>
+                    <button class="btnPrimary btn disabled" id="savePhotoBtn" type="button">Save</button>
+                  </div>
+                </div>
+              </div>
+              <input id="fileInput" type="file" accept="image/*" />
+            </div>
+
+            <div class="card">
+              <div class="sectionTitle">Switch Player</div>
+              <select id="kidSelect" style="display:none;"></select>
+            </div>
+
+          </div>
+        </div>
+
       </div>
 
-      <!-- SWITCH PLAYER (BELOW PROFILE) -->
-      <div class="card" style="margin-top:12px;">
-        <div class="sectionTitle">Switch Player</div>
-        <select id="kidSelect" style="display:none;"></select>
+      <!-- ✅ NEW: CLUB ALERT AS ITS OWN SECTION -->
+      <div class="panel" style="margin-top:14px;">
+        <div class="panelInner">
+          <div class="h2">Club Alert</div>
+
+          <div class="card">
+            <div class="sectionTitle">Alert</div>
+            <div class="big" id="alertTitle" style="font-size:20px;">—</div>
+            <div class="small" id="alertMsg"></div>
+          </div>
+        </div>
       </div>
 
     </div>
-
   </div>
 
-</div>
-
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 
 <script>
 let state = null;
 let pendingDataUrl = null;
-let lastSavedUrl = ""; // ✅ prevents "snap back" if STATE comes in stale
+let lastSavedUrl = "";
 
 function post(type, payload = {}) {
   window.parent.postMessage({ type, payload }, "*");
@@ -238,8 +446,23 @@ function setDisabled(btnId, disabled){
 }
 
 function getActivePlayerId(){
-  // ✅ supports Parent + Player roles safely
   return (state?.activePlayerId || state?.player?.id || "").trim();
+}
+
+function applyClubThemeFromState(){
+  try{
+    const theme = state?.theme || state?.payload?.theme || null;
+    if(!theme) return;
+
+    const accent  = String(theme.accent  || theme.primary || "").trim() || "#7B2EFF";
+    const accent2 = String(theme.accent2 || accent).trim() || accent;
+    const glow    = String(theme.glow    || theme.clubGlow || "").trim() || "rgba(123,46,255,.18)";
+
+    const r = document.documentElement.style;
+    r.setProperty("--accent", accent);
+    r.setProperty("--accent2", accent2);
+    r.setProperty("--clubGlow", glow);
+  }catch(_){}
 }
 
 function render(){
@@ -257,10 +480,6 @@ function render(){
   document.getElementById("jersey").textContent = p.jerseyNumber ? "#" + p.jerseyNumber : "—";
   document.getElementById("dob").textContent = p.dob || "—";
 
-  // ✅ Avatar logic:
-  // - If previewing: show the preview
-  // - Else: show lastSavedUrl if present (prevents snap-back)
-  // - Else: show CMS photoUrl
   if (pendingDataUrl) {
     document.getElementById("avatar").src = pendingDataUrl;
   } else if (lastSavedUrl) {
@@ -295,15 +514,12 @@ window.addEventListener("message", (e) => {
   if (m.type === "STATE") {
     state = m.payload;
 
-    // ✅ If Wix sends stale photoUrl, do NOT let it overwrite a newly saved one
-    // But if Wix does send the updated photoUrl, we can accept it and clear lastSavedUrl.
+    applyClubThemeFromState();
+
     const cmsUrl = state?.player?.photoUrl || "";
     if (lastSavedUrl && cmsUrl) {
-      // If they match (ignoring cache-bust), we can clear the override
       const baseLast = lastSavedUrl.split("?")[0];
-      if (cmsUrl === baseLast) {
-        lastSavedUrl = "";
-      }
+      if (cmsUrl === baseLast) lastSavedUrl = "";
     }
 
     render();
@@ -318,18 +534,12 @@ window.addEventListener("message", (e) => {
   if (m.type === "PHOTO_SAVED") {
     if (m.payload?.ok) {
       toast("Saved");
-
-      // ✅ Clear preview state + lock in new URL
       pendingDataUrl = null;
 
-      // cache-bust so browser shows new image instantly
       const url = (m.payload?.url || "").trim();
       if (url) {
         lastSavedUrl = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
-
-        // Also update local state so render() won’t revert
         if (state?.player) state.player.photoUrl = url;
-
         document.getElementById("avatar").src = lastSavedUrl;
       }
 
@@ -345,7 +555,6 @@ window.addEventListener("message", (e) => {
 document.getElementById("viewIdpBtn").onclick = () => post("VIEW_IDP", {});
 
 document.getElementById("kidSelect").onchange = (e) => {
-  // switching player should reset preview UI
   pendingDataUrl = null;
   lastSavedUrl = "";
   setDisabled("savePhotoBtn", true);
@@ -380,11 +589,9 @@ document.getElementById("savePhotoBtn").onclick = () => {
 
   setDisabled("savePhotoBtn", true);
   toast("Saving…");
-
   post("SAVE_PHOTO_DATAURL", { playerId: pid, dataUrl: pendingDataUrl });
 };
 
-// ✅ ADDED: schedule buttons postMessage (only addition)
 document.getElementById("openScheduleListBtn")?.addEventListener("click", () => {
   post("OPEN_SCHEDULE_LIST", {});
 });
