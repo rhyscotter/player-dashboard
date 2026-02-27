@@ -64,13 +64,20 @@
 
   .sub{color:var(--muted);font-size:13px;margin-top:6px;max-width:760px}
 
-  .metaRow{
+  /* Meta line (same vibe as Coach Office coachLine) */
+  .metaLine{
     margin-top:10px;
-    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-    color:rgba(255,255,255,.70);
-    font-size:12px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;
+    color:rgba(255,255,255,.62);
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
   }
-  .dot{
+  .metaDot{
     width:8px;height:8px;border-radius:999px;
     background:var(--accent);
     box-shadow:0 0 18px var(--clubGlow);
@@ -81,12 +88,14 @@
     padding:8px 10px;border-radius:999px;
     border:1px solid rgba(255,255,255,.14);
     background:rgba(255,255,255,.04);
+    color:rgba(255,255,255,.92);
   }
-  .pill strong{color:rgba(255,255,255,.92)}
 
-  /* Grid */
+  /* Main grid (same structure as Coach Office) */
   .grid{margin-top:16px;display:grid;grid-template-columns:1.05fr .95fr;gap:14px}
-  @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+  @media (max-width: 860px){.grid{grid-template-columns:1fr}}
+
+  .stack{display:flex;flex-direction:column;gap:14px}
 
   .panel{
     background:rgba(17,17,17,.88);
@@ -113,11 +122,19 @@
   }
   .panel:hover .h2::after{transform:scaleX(1)}
 
-  /* Cards inside */
-  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
-  .statRow{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:520px){.statRow{grid-template-columns:1fr}}
+  .tiny{color:rgba(255,255,255,.62);font-size:12px;margin-top:10px}
 
+  /* Next Event block */
+  .big{
+    margin-top:10px;
+    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
+    font-size:30px;text-transform:uppercase;letter-spacing:.8px;
+    color:rgba(255,255,255,.95);
+  }
+  .details{margin-top:6px;color:rgba(255,255,255,.62);font-size:12px;line-height:1.4}
+
+  .statRow{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:520px){.statRow{grid-template-columns:1fr}}
   .stat{
     border:1px solid rgba(255,255,255,.10);
     background:rgba(255,255,255,.03);
@@ -133,6 +150,7 @@
     font-size:18px;font-weight:900;
   }
 
+  /* Buttons (same as coach office navBtn vibe) */
   .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
   .navBtn{
     padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
@@ -150,14 +168,14 @@
   }
   .navBtn:hover::after{transform:scaleX(1)}
   .navBtn:active{transform:translateY(0px) scale(.99)}
-  .disabled{opacity:.45;pointer-events:none;}
-
   .primaryBtn{
     background:linear-gradient(90deg, var(--accent), var(--accent2));
     border:1px solid rgba(255,255,255,.10);
   }
+  .disabled{opacity:.45;pointer-events:none;}
 
   /* Profile */
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:12px}
   .avatarWrap{
     width:118px;height:118px;border-radius:18px;overflow:hidden;
     border:1px solid rgba(255,255,255,.12);
@@ -180,7 +198,26 @@
     outline:none;
   }
 
-  .tiny{color:rgba(255,255,255,.62);font-size:12px;margin-top:10px}
+  .alertBox{
+    margin-top:10px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+    border-radius:14px;
+    padding:12px;
+  }
+  .alertTitle{
+    font-weight:900;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    font-size:12px;
+    color:rgba(255,255,255,.92);
+  }
+  .alertMsg{
+    margin-top:6px;
+    color:rgba(255,255,255,.62);
+    font-size:12px;
+    line-height:1.4;
+  }
 
   .toast{
     position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
@@ -195,56 +232,72 @@
   <div class="stage">
     <div class="wrap">
 
+      <!-- Title must keep id athleteName (your JS uses it) -->
       <div class="title" id="athleteName">LOADING</div>
       <div class="sub">Your next event, profile tools, and quick actions — all in one place.</div>
 
-      <div class="metaRow">
-        <span class="dot" aria-hidden="true"></span>
-        <span class="pill"><span id="roleText">ROLE: —</span></span>
-        <span class="pill"><span id="clubText">CLUB: —</span></span>
+      <div class="metaLine">
+        <span class="metaDot" aria-hidden="true"></span>
+        <span class="pill" id="roleText">ROLE: —</span>
+        <span class="pill" id="clubText">CLUB: —</span>
         <span class="pill"><strong id="today">—</strong></span>
         <span class="pill"><strong id="teamName">—</strong></span>
       </div>
 
       <div class="grid">
-        <!-- LEFT -->
-        <div class="panel">
-          <div class="panelInner">
-            <div class="h2">Next Event</div>
 
-            <div class="stat" style="margin-top:10px;">
-              <div class="statLabel">Type</div>
-              <div class="statValue" id="eventType">—</div>
-              <div class="tiny" id="eventDetails"></div>
-            </div>
+        <!-- LEFT COLUMN (stacked) -->
+        <div class="stack">
 
-            <div class="actions">
-              <button class="navBtn" id="openScheduleListBtn" type="button">Schedule (List)</button>
-              <button class="navBtn" id="openScheduleCalBtn" type="button">Schedule (Calendar)</button>
-            </div>
+          <!-- NEXT EVENT -->
+          <div class="panel">
+            <div class="panelInner">
+              <div class="h2">Next Event</div>
 
-            <div class="statRow">
-              <div class="stat">
-                <div class="statLabel">Jersey</div>
-                <div class="statValue" id="jersey">—</div>
+              <div class="big" id="eventType">—</div>
+              <div class="details" id="eventDetails"></div>
+
+              <div class="actions">
+                <button class="navBtn" id="openScheduleListBtn" type="button">Schedule (List)</button>
+                <button class="navBtn" id="openScheduleCalBtn" type="button">Schedule (Calendar)</button>
               </div>
-              <div class="stat">
-                <div class="statLabel">DOB</div>
-                <div class="statValue" id="dob">—</div>
+
+              <div class="statRow">
+                <div class="stat">
+                  <div class="statLabel">Jersey</div>
+                  <div class="statValue" id="jersey">—</div>
+                </div>
+                <div class="stat">
+                  <div class="statLabel">DOB</div>
+                  <div class="statValue" id="dob">—</div>
+                </div>
               </div>
             </div>
-
           </div>
+
+          <!-- ✅ CLUB ALERT (separate section/panel) -->
+          <div class="panel">
+            <div class="panelInner">
+              <div class="h2">Club Alert</div>
+              <div class="alertBox">
+                <div class="alertTitle" id="alertTitle">—</div>
+                <div class="alertMsg" id="alertMsg"></div>
+              </div>
+              <div class="tiny">Latest alert for your club/team.</div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- RIGHT -->
-        <div>
+        <!-- RIGHT COLUMN (stacked) -->
+        <div class="stack">
+
           <!-- PROFILE -->
           <div class="panel">
             <div class="panelInner">
               <div class="h2">Profile</div>
 
-              <div class="row" style="margin-top:12px;align-items:center;">
+              <div class="row">
                 <div class="avatarWrap">
                   <img id="avatar" class="avatar" />
                   <div id="unsavedBadge" class="badge">NEW</div>
@@ -265,7 +318,7 @@
           </div>
 
           <!-- SWITCH PLAYER -->
-          <div class="panel" style="margin-top:12px;">
+          <div class="panel">
             <div class="panelInner">
               <div class="h2">Switch Player</div>
               <div class="tiny">If you’re a parent, choose which player to view.</div>
@@ -273,20 +326,9 @@
             </div>
           </div>
 
-          <!-- ✅ ALERT (separate section) -->
-          <div class="panel" style="margin-top:12px;">
-            <div class="panelInner">
-              <div class="h2">Club Alert</div>
-              <div class="stat" style="margin-top:10px;">
-                <div class="statLabel" id="alertTitle" style="color:rgba(255,255,255,.92)">—</div>
-                <div class="tiny" id="alertMsg"></div>
-              </div>
-            </div>
-          </div>
-
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 
@@ -319,7 +361,7 @@ function getActivePlayerId(){
   return (state?.activePlayerId || state?.player?.id || "").trim();
 }
 
-/* ✅ THEME APPLY (from Wix STATE.theme) */
+/* ✅ Club Theme: reads from Wix STATE.payload.theme (same pattern as coach dash) */
 function applyThemeFromState(st){
   const theme = st?.theme || null;
   const accent  = (theme?.accent  || "#7B2EFF");
@@ -334,7 +376,6 @@ function applyThemeFromState(st){
 function render(){
   if(!state) return;
 
-  // Apply theme every render (safe)
   applyThemeFromState(state);
 
   const p = state.player || {};
@@ -383,7 +424,6 @@ window.addEventListener("message", (e) => {
   if (m.type === "STATE") {
     state = m.payload;
 
-    // If Wix sends stale photoUrl, do NOT let it overwrite a newly saved one
     const cmsUrl = state?.player?.photoUrl || "";
     if (lastSavedUrl && cmsUrl) {
       const baseLast = lastSavedUrl.split("?")[0];
