@@ -1,236 +1,325 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Elite Academy Profile</title>
+<title>Player Dashboard</title>
 
 <style>
-:root{
-  --bg:#0b0d10;
-  --ink:#ffffff;
-  --muted:rgba(255,255,255,.62);
-  --line:rgba(255,255,255,.10);
-  --radius:26px;
+  :root{
+    --panel:rgba(17,17,17,.88);
+    --border:rgba(255,255,255,.10);
+    --text:#fff;
+    --muted:rgba(255,255,255,.62);
 
-  /* ✅ CLUB THEME VARS (defaults) */
-  --accent:#7B2EFF;
-  --accent2:#7B2EFF;
-  --clubGlow: rgba(123,46,255,.18);
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  background:
-    radial-gradient(900px 500px at 15% 0%, rgba(255,255,255,.08), transparent 55%),
-    radial-gradient(900px 500px at 85% 0%, rgba(255,255,255,.06), transparent 55%),
-    var(--bg);
-  color:var(--ink);
-}
-.top{
-  position:sticky;top:0;z-index:10;
-  backdrop-filter: blur(14px);
-  background: rgba(11,13,16,.72);
-  border-bottom:1px solid var(--line);
-}
-.topInner{
-  max-width:1200px;margin:0 auto;
-  padding:16px 20px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.kicker{font-size:11px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;}
-.subkicker{margin-top:6px;font-size:12px;color:var(--muted);font-weight:650;}
-.pill{
-  padding:10px 14px;border:1px solid var(--line);border-radius:999px;
-  background:rgba(255,255,255,.04);font-size:12px;font-weight:700;
-}
-.page{max-width:1200px;margin:0 auto;padding:34px 20px 80px;}
+    /* ✅ CLUB THEME (overridden by page code) */
+    --accent:#7B2EFF;
+    --accent2:#B266FF;
+    --clubGlow: rgba(123,46,255,.18);
+  }
 
-.hero{
-  display:flex;justify-content:space-between;align-items:flex-end;
-  margin-bottom:22px;
-}
-.name{font-size:52px;font-weight:950;letter-spacing:-2px;}
-.teamTag{
-  padding:10px 14px;border-radius:999px;border:1px solid var(--line);
-  background:rgba(255,255,255,.04);font-size:12px;font-weight:900;
-  letter-spacing:1px;text-transform:uppercase;
-}
+  *{box-sizing:border-box}
+  body{margin:0;background:transparent;color:var(--text);font-family:Arial,sans-serif}
 
-/* MAIN GRID */
-.layout{
-  display:grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap:18px;
-}
-@media(max-width:900px){
-  .layout{grid-template-columns:1fr}
-}
+  .stage{
+    min-height:100vh;padding:22px;
+    background:
+      radial-gradient(1000px 600px at 20% -10%, rgba(255,255,255,.05), transparent 60%),
+      linear-gradient(180deg,#000 0%,#050505 100%);
+    position:relative;overflow:hidden;
+  }
+  .stage::before{
+    content:"";position:absolute; inset:-40% -20%;
+    transform:rotate(-14deg);
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.05), rgba(255,255,255,0));
+    opacity:.18;pointer-events:none;
+  }
+  .stage::after{
+    content:"";position:absolute; inset:0;
+    background:radial-gradient(800px 520px at 80% 18%, var(--clubGlow), transparent 62%);
+    opacity:.9;pointer-events:none;
+    animation:glowPulse 2.8s ease-in-out infinite;
+  }
+  @keyframes glowPulse{ 0%{opacity:.55} 50%{opacity:1} 100%{opacity:.55} }
 
-.card{
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  background:rgba(255,255,255,.03);
-  padding:20px;
-}
-.cardStrong{
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-}
+  .wrap{max-width:980px;margin:0 auto;position:relative;z-index:2}
 
-.sectionTitle{
-  font-size:11px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);
-}
-.big{margin-top:14px;font-size:28px;font-weight:950;}
-.sub{margin-top:8px;font-size:13px;color:var(--muted);}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-.stat{
-  background:rgba(255,255,255,.04);border:1px solid var(--line);
-  border-radius:22px;padding:14px;
-}
-.statLabel{font-size:11px;color:var(--muted);font-weight:750;text-transform:uppercase;}
-.statValue{margin-top:8px;font-size:20px;font-weight:950;}
+  .title{
+    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
+    font-size:52px;text-transform:uppercase;letter-spacing:1px;line-height:1;
+    position:relative;padding-bottom:10px;
+  }
+  .title::after{
+    content:"";position:absolute;left:0;bottom:0;height:6px;width:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--accent), transparent);
+    animation:underlineSweep 1.8s linear infinite;
+  }
+  @keyframes underlineSweep{
+    0%{filter:brightness(1); transform:translateX(-2px)}
+    50%{filter:brightness(1.12); transform:translateX(2px)}
+    100%{filter:brightness(1); transform:translateX(-2px)}
+  }
 
-.avatarWrap{
-  width:120px;height:120px;border-radius:30px;overflow:hidden;border:1px solid var(--line);
-  background:rgba(255,255,255,.05);position:relative;
-}
-.avatar{width:100%;height:100%;object-fit:cover;}
-.badge{
-  position:absolute;right:8px;bottom:8px;background:#fff;color:#000;
-  padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;display:none;
-}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px;max-width:650px}
 
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-button{
-  border:none;border-radius:999px;padding:10px 14px;
-  font-weight:900;font-size:11px;cursor:pointer;
-}
+  /* ✅ subtle line (role/club) */
+  .coachLine{
+    margin-top:8px;
+    color:rgba(255,255,255,.62);
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .coachDot{
+    width:8px;height:8px;border-radius:999px;
+    background:var(--accent);
+    box-shadow:0 0 18px var(--clubGlow);
+    opacity:.9;
+  }
+  .coachName{
+    color:rgba(255,255,255,.92);
+    font-weight:900;
+    letter-spacing:.2px;
+  }
 
-/* ✅ ONLY COLOR TIE-IN (no layout change): primary uses club accent */
-.primary{background:var(--accent);color:#fff; box-shadow:0 0 22px var(--clubGlow);}
-.ghost{background:transparent;border:1px solid var(--line);color:#fff;}
-.disabled{opacity:.45;pointer-events:none;}
+  .grid{margin-top:16px;display:grid;grid-template-columns:1.05fr .95fr;gap:14px}
+  @media (max-width: 860px){.grid{grid-template-columns:1fr}}
 
-select{
-  width:100%;padding:10px;border-radius:999px;border:1px solid var(--line);
-  background:rgba(255,255,255,.04);color:#fff;font-weight:850;
-}
+  .panel{
+    background:rgba(17,17,17,.88);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:18px;padding:14px;position:relative;overflow:hidden;
+  }
+  .panel::before{
+    content:"";position:absolute; inset:-60% -20%;
+    transform:rotate(-12deg);
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.05), rgba(255,255,255,0));
+    opacity:.22;pointer-events:none;
+  }
+  .panelInner{position:relative;z-index:2}
 
-.toast{
-  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
-  background:#fff;color:#000;padding:8px 14px;border-radius:999px;font-weight:850;display:none;
-}
-input[type=file]{display:none}
+  .h2{
+    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
+    font-size:26px;text-transform:uppercase;letter-spacing:.8px;margin:0;padding-bottom:8px;
+    position:relative;
+  }
+  .h2::after{
+    content:"";position:absolute;left:0;bottom:0;height:4px;width:100%;
+    border-radius:999px;background:linear-gradient(90deg, var(--accent), transparent);
+    transform:scaleX(.35);transform-origin:left;transition:.18s ease;opacity:.95;
+  }
+  .panel:hover .h2::after{transform:scaleX(1)}
+
+  .tiny{color:rgba(255,255,255,.62);font-size:12px;margin-top:10px}
+
+  /* Pills / stats */
+  .pillRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 12px;border-radius:999px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.14);
+    color:#fff;font-weight:900;letter-spacing:.6px;text-transform:uppercase;
+  }
+  .pill strong{font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;font-size:18px;letter-spacing:.8px}
+  .glow{box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 0 32px var(--clubGlow);}
+
+  .twoCol{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width: 520px){ .twoCol{grid-template-columns:1fr} }
+
+  .statBox{
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+    border-radius:16px;
+    padding:12px;
+  }
+  .statLabel{
+    font-weight:900;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    font-size:11px;
+    color:rgba(255,255,255,.62);
+  }
+  .statValue{
+    margin-top:8px;
+    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
+    font-size:22px;
+    letter-spacing:.6px;
+    color:rgba(255,255,255,.92);
+  }
+
+  .navBtn{
+    padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.04);color:#fff;font-weight:900;letter-spacing:.7px;text-transform:uppercase;
+    cursor:pointer;transition:.14s ease;position:relative;overflow:hidden;
+  }
+  .navBtn::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:10px;height:4px;border-radius:999px;
+    background:linear-gradient(90deg, var(--accent), transparent);
+    transform:scaleX(0);transform-origin:left;transition:.18s ease;opacity:.95;
+  }
+  .navBtn:hover{
+    transform:translateY(-1px);background:rgba(255,255,255,.08);
+    border-color:rgba(255,255,255,.18);box-shadow:0 0 28px var(--clubGlow);
+  }
+  .navBtn:hover::after{transform:scaleX(1)}
+  .navBtn:active{transform:translateY(0px) scale(.99)}
+  .navBtn.primary{
+    background:rgba(255,255,255,.08);
+    border-color:rgba(255,255,255,.18);
+    box-shadow:0 0 28px var(--clubGlow);
+  }
+  .disabled{opacity:.45;pointer-events:none;}
+
+  /* Profile */
+  .profileRow{display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .avatarWrap{
+    width:110px;height:110px;border-radius:18px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.05);position:relative;
+  }
+  .avatar{width:100%;height:100%;object-fit:cover;}
+  .badge{
+    position:absolute;right:8px;bottom:8px;background:#fff;color:#000;
+    padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;display:none;
+  }
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+  select{
+    width:100%;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.03);color:#fff;font-weight:850;outline:none;
+  }
+
+  .err{margin-top:14px;color:#fff;background:rgba(255,0,0,.12);border:1px solid rgba(255,0,0,.35);padding:12px;border-radius:14px}
+  .toast{
+    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+    background:#fff;color:#000;padding:8px 14px;border-radius:999px;font-weight:850;display:none;
+    z-index:9999;
+  }
+  input[type=file]{display:none}
 </style>
 </head>
 
 <body>
+  <div class="stage">
+    <div class="wrap">
+      <div class="title">Player Dashboard</div>
+      <div class="sub" id="subtitle">Schedule, profile, alerts — all in one place.</div>
 
-<div class="top">
-  <div class="topInner">
-    <div>
-      <div class="kicker" id="roleText">—</div>
-      <div class="subkicker" id="clubText">—</div>
-    </div>
-    <div class="pill" id="today">—</div>
-  </div>
-</div>
-
-<div class="page">
-
-  <div class="hero">
-    <div class="name" id="athleteName">LOADING</div>
-    <div class="teamTag" id="teamName">—</div>
-  </div>
-
-  <div class="layout">
-
-    <!-- LEFT COLUMN -->
-    <div>
-
-      <!-- NEXT EVENT -->
-      <div class="card cardStrong">
-        <div class="sectionTitle">Next Event</div>
-        <div class="big" id="eventType">—</div>
-        <div class="sub" id="eventDetails"></div>
-
-        <!-- ✅ ADDED: Schedule buttons (only addition) -->
-        <div class="actions" style="margin-top:14px;">
-          <button class="ghost" id="openScheduleListBtn">Schedule (List)</button>
-          <button class="ghost" id="openScheduleCalBtn">Schedule (Calendar)</button>
-        </div>
-
-        <div class="grid2">
-          <div class="stat">
-            <div class="statLabel">Jersey</div>
-            <div class="statValue" id="jersey">—</div>
-          </div>
-          <div class="stat">
-            <div class="statLabel">DOB</div>
-            <div class="statValue" id="dob">—</div>
-          </div>
-        </div>
+      <div class="coachLine" id="roleLine">
+        <span class="coachDot" aria-hidden="true"></span>
+        <span id="roleText">ROLE: —</span>
+        <span>•</span>
+        <span class="coachName" id="clubText">CLUB: —</span>
+        <span>•</span>
+        <span id="todayText">—</span>
       </div>
 
-      <!-- ALERTS -->
-      <div class="card" style="margin-top:12px;">
-        <div class="sectionTitle">Alert</div>
-        <div class="big" id="alertTitle" style="font-size:20px;">—</div>
-        <div class="sub" id="alertMsg"></div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div>
-
-      <!-- PROFILE (TOP) -->
-      <div class="card">
-        <div class="sectionTitle">Profile</div>
-
-        <div style="display:flex;gap:12px;align-items:center;margin-top:12px;">
-          <div class="avatarWrap">
-            <img id="avatar" class="avatar" />
-            <div id="unsavedBadge" class="badge">NEW</div>
-          </div>
-
-          <div style="flex:1;">
-            <div class="actions">
-              <button class="primary" id="viewIdpBtn">View IDP</button>
-              <button class="ghost" id="changePhotoBtn">Change Photo</button>
-              <button class="primary disabled" id="savePhotoBtn">Save</button>
+      <div class="grid">
+        <!-- LEFT: OVERVIEW -->
+        <div class="panel">
+          <div class="panelInner">
+            <div class="h2">Overview</div>
+            <div class="sub" style="margin-top:6px">
+              <span id="athleteName" style="font-weight:900;letter-spacing:.4px;">LOADING</span>
+              <span style="opacity:.5">•</span>
+              <span id="teamName" style="font-weight:900;letter-spacing:.6px;text-transform:uppercase;">—</span>
             </div>
+
+            <div class="pillRow">
+              <div class="pill glow"><span>Jersey:</span> <strong id="jersey">—</strong></div>
+              <div class="pill"><span>DOB:</span> <strong id="dob">—</strong></div>
+            </div>
+
+            <div class="twoCol">
+              <div class="statBox">
+                <div class="statLabel">Next Event</div>
+                <div class="statValue" id="eventType">—</div>
+                <div class="tiny" id="eventDetails"></div>
+              </div>
+              <div class="statBox">
+                <div class="statLabel">Schedule</div>
+                <div class="tiny">Open your schedule pages.</div>
+                <div class="actions">
+                  <button class="navBtn" id="openScheduleListBtn" type="button">Schedule (List)</button>
+                  <button class="navBtn" id="openScheduleCalBtn" type="button">Schedule (Calendar)</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ✅ Separate alerts section (own block) -->
+            <div style="margin-top:12px" class="statBox">
+              <div class="statLabel">Alert</div>
+              <div class="statValue" id="alertTitle" style="font-size:18px;">—</div>
+              <div class="tiny" id="alertMsg"></div>
+            </div>
+
+            <div id="error"></div>
           </div>
         </div>
 
-        <input id="fileInput" type="file" accept="image/*" />
-      </div>
+        <!-- RIGHT: PROFILE -->
+        <div class="panel">
+          <div class="panelInner">
+            <div class="h2">Profile</div>
 
-      <!-- SWITCH PLAYER (BELOW PROFILE) -->
-      <div class="card" style="margin-top:12px;">
-        <div class="sectionTitle">Switch Player</div>
-        <select id="kidSelect" style="display:none;"></select>
-      </div>
+            <div class="profileRow">
+              <div class="avatarWrap">
+                <img id="avatar" class="avatar" alt="Player photo"/>
+                <div id="unsavedBadge" class="badge">NEW</div>
+              </div>
 
+              <div style="flex:1;min-width:220px;">
+                <div class="actions">
+                  <button class="navBtn primary" id="viewIdpBtn" type="button">View IDP</button>
+                  <button class="navBtn" id="changePhotoBtn" type="button">Change Photo</button>
+                  <button class="navBtn primary disabled" id="savePhotoBtn" type="button">Save</button>
+                </div>
+
+                <div class="tiny">Update photo, view IDP, and switch players (parent mode).</div>
+              </div>
+            </div>
+
+            <input id="fileInput" type="file" accept="image/*" />
+
+            <div style="margin-top:12px">
+              <div class="tiny" style="margin-bottom:8px">Switch Player</div>
+              <select id="kidSelect" style="display:none;"></select>
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
-
   </div>
 
-</div>
-
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 
 <script>
 let state = null;
 let pendingDataUrl = null;
-let lastSavedUrl = ""; // ✅ prevents "snap back" if STATE comes in stale
+let lastSavedUrl = "";
+
+function safe(s){ return String(s ?? "").replace(/[<>]/g,""); }
+const $error = document.getElementById("error");
+function setError(msg){ $error.innerHTML = msg ? `<div class="err">${safe(msg)}</div>` : ""; }
 
 function post(type, payload = {}) {
   window.parent.postMessage({ type, payload }, "*");
 }
 
-/* ✅ THEME APPLY (no layout change) */
+/* ✅ THEME APPLY */
 function applyTheme(theme){
   const t = theme || {};
   const accent  = String(t.accent  || t.primary || "#7B2EFF").trim();
@@ -240,7 +329,7 @@ function applyTheme(theme){
   r.setProperty("--accent", accent);
   r.setProperty("--accent2", accent2);
   r.setProperty("--clubGlow", glow);
-  console.log("🟪 PLAYER DASH THEME APPLIED", {accent, accent2, glow});
+  console.log("🟪 PLAYER DASH THEME APPLIED", { accent, accent2, glow });
 }
 
 function toast(msg){
@@ -258,7 +347,6 @@ function setDisabled(btnId, disabled){
 }
 
 function getActivePlayerId(){
-  // ✅ supports Parent + Player roles safely
   return (state?.activePlayerId || state?.player?.id || "").trim();
 }
 
@@ -271,7 +359,7 @@ function render(){
 
   document.getElementById("roleText").textContent = "ROLE: " + (state.role || "—");
   document.getElementById("clubText").textContent = "CLUB: " + (state.clubSlug || "—");
-  document.getElementById("today").textContent = state.today || "—";
+  document.getElementById("todayText").textContent = state.today || "—";
 
   document.getElementById("teamName").textContent = state.team?.name || "—";
   document.getElementById("jersey").textContent = p.jerseyNumber ? "#" + p.jerseyNumber : "—";
@@ -298,7 +386,7 @@ function render(){
   if (state.role === "Parent" && kids.length) {
     sel.style.display = "block";
     sel.innerHTML = kids.map(k =>
-      `<option value="${k.id}" ${k.id===state.activePlayerId?"selected":""}>${k.name}</option>`
+      `<option value="${k.id}" ${k.id===state.activePlayerId?"selected":""}>${safe(k.name)}</option>`
     ).join("");
   } else {
     sel.style.display = "none";
@@ -307,8 +395,8 @@ function render(){
 
 window.addEventListener("message", (e) => {
   const m = e.data || {};
+  if (!m) return;
 
-  /* ✅ Accept dedicated theme message */
   if (m.type === "THEME") {
     const theme = m.payload?.theme || m.payload || m.theme || null;
     if (theme) applyTheme(theme);
@@ -318,16 +406,13 @@ window.addEventListener("message", (e) => {
   if (m.type === "STATE") {
     state = m.payload;
 
-    /* ✅ Accept theme inside STATE too */
     const theme = state?.theme || null;
     if (theme) applyTheme(theme);
 
     const cmsUrl = state?.player?.photoUrl || "";
     if (lastSavedUrl && cmsUrl) {
       const baseLast = lastSavedUrl.split("?")[0];
-      if (cmsUrl === baseLast) {
-        lastSavedUrl = "";
-      }
+      if (cmsUrl === baseLast) lastSavedUrl = "";
     }
 
     render();
@@ -397,11 +482,9 @@ document.getElementById("savePhotoBtn").onclick = () => {
 
   setDisabled("savePhotoBtn", true);
   toast("Saving…");
-
   post("SAVE_PHOTO_DATAURL", { playerId: pid, dataUrl: pendingDataUrl });
 };
 
-// ✅ ADDED: schedule buttons postMessage (only addition)
 document.getElementById("openScheduleListBtn")?.addEventListener("click", () => {
   post("OPEN_SCHEDULE_LIST", {});
 });
@@ -412,6 +495,5 @@ document.getElementById("openScheduleCalBtn")?.addEventListener("click", () => {
 // Handshake
 post("IFRAME_READY", {});
 </script>
-
 </body>
 </html>
