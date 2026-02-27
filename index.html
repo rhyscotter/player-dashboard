@@ -12,15 +12,17 @@
     --text:#fff;
     --muted:rgba(255,255,255,.62);
 
-    /* ✅ overridden by club theme */
+    /* ✅ Club theming (Wix overrides via STATE.theme) */
     --accent:#7B2EFF;
     --accent2:#B266FF;
     --clubGlow: rgba(123,46,255,.18);
-  }
 
+    --radius:18px;
+  }
   *{box-sizing:border-box}
   body{margin:0;background:transparent;color:var(--text);font-family:Arial,sans-serif}
 
+  /* Coach-dashboard style stage */
   .stage{
     min-height:100vh;padding:22px;
     background:
@@ -44,11 +46,14 @@
 
   .wrap{max-width:1100px;margin:0 auto;position:relative;z-index:2}
 
-  /* Header */
+  /* Header (same vibe as coach dashboard) */
+  .titleRow{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  }
   .title{
     font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
     font-size:52px;text-transform:uppercase;letter-spacing:1px;line-height:1;
-    position:relative;padding-bottom:10px;
+    position:relative;padding-bottom:10px;margin:0;
   }
   .title::after{
     content:"";position:absolute;left:0;bottom:0;height:6px;width:100%;
@@ -62,45 +67,34 @@
     100%{filter:brightness(1); transform:translateX(-2px)}
   }
 
-  .sub{color:var(--muted);font-size:13px;margin-top:6px;max-width:760px}
-
-  /* Meta line (same vibe as Coach Office coachLine) */
-  .metaLine{
-    margin-top:10px;
-    color:rgba(255,255,255,.62);
-    font-size:12px;
-    font-weight:900;
-    letter-spacing:.8px;
-    text-transform:uppercase;
-    display:flex;
-    gap:10px;
-    align-items:center;
-    flex-wrap:wrap;
+  .metaRow{
+    margin-top:8px;
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    color:rgba(255,255,255,.72);
+    font-size:12px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;
   }
   .metaDot{
-    width:8px;height:8px;border-radius:999px;
-    background:var(--accent);
-    box-shadow:0 0 18px var(--clubGlow);
-    opacity:.9;
+    width:8px;height:8px;border-radius:999px;background:var(--accent);
+    box-shadow:0 0 18px var(--clubGlow);opacity:.95;
   }
   .pill{
-    display:inline-flex;gap:8px;align-items:center;
-    padding:8px 10px;border-radius:999px;
-    border:1px solid rgba(255,255,255,.14);
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 12px;border-radius:999px;
     background:rgba(255,255,255,.04);
-    color:rgba(255,255,255,.92);
+    border:1px solid rgba(255,255,255,.14);
+    color:#fff;font-weight:900;letter-spacing:.6px;text-transform:uppercase;
+    box-shadow:0 0 22px var(--clubGlow);
   }
 
-  /* Main grid (same structure as Coach Office) */
+  /* Main grid (coach dashboard style) */
   .grid{margin-top:16px;display:grid;grid-template-columns:1.05fr .95fr;gap:14px}
-  @media (max-width: 860px){.grid{grid-template-columns:1fr}}
-
-  .stack{display:flex;flex-direction:column;gap:14px}
+  @media (max-width: 900px){.grid{grid-template-columns:1fr}}
 
   .panel{
-    background:rgba(17,17,17,.88);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:18px;padding:14px;position:relative;overflow:hidden;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px;position:relative;overflow:hidden;
   }
   .panel::before{
     content:"";position:absolute; inset:-60% -20%;
@@ -122,103 +116,65 @@
   }
   .panel:hover .h2::after{transform:scaleX(1)}
 
-  .tiny{color:rgba(255,255,255,.62);font-size:12px;margin-top:10px}
+  .sub{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.4}
 
-  /* Next Event block */
-  .big{
-    margin-top:10px;
-    font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;
-    font-size:30px;text-transform:uppercase;letter-spacing:.8px;
-    color:rgba(255,255,255,.95);
+  /* Profile card bits */
+  .profileTop{display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .avatarWrap{
+    width:120px;height:120px;border-radius:22px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.05);position:relative;
   }
-  .details{margin-top:6px;color:rgba(255,255,255,.62);font-size:12px;line-height:1.4}
-
-  .statRow{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:520px){.statRow{grid-template-columns:1fr}}
-  .stat{
-    border:1px solid rgba(255,255,255,.10);
-    background:rgba(255,255,255,.03);
-    border-radius:14px;padding:10px;
-  }
-  .statLabel{
-    color:rgba(255,255,255,.62);
-    font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:900;
-  }
-  .statValue{
-    margin-top:6px;
-    color:rgba(255,255,255,.92);
-    font-size:18px;font-weight:900;
+  .avatar{width:100%;height:100%;object-fit:cover}
+  .badge{
+    position:absolute;right:8px;bottom:8px;
+    background:#fff;color:#000;
+    padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;display:none;
   }
 
-  /* Buttons (same as coach office navBtn vibe) */
-  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-  .navBtn{
+  /* Buttons (coach dashboard vibe) */
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .btn{
     padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
     background:rgba(255,255,255,.04);color:#fff;font-weight:900;letter-spacing:.7px;text-transform:uppercase;
     cursor:pointer;transition:.14s ease;position:relative;overflow:hidden;
   }
-  .navBtn::after{
+  .btn::after{
     content:"";position:absolute;left:12px;right:12px;bottom:10px;height:4px;border-radius:999px;
     background:linear-gradient(90deg, var(--accent), transparent);
     transform:scaleX(0);transform-origin:left;transition:.18s ease;opacity:.95;
   }
-  .navBtn:hover{
+  .btn:hover{
     transform:translateY(-1px);background:rgba(255,255,255,.08);
     border-color:rgba(255,255,255,.18);box-shadow:0 0 28px var(--clubGlow);
   }
-  .navBtn:hover::after{transform:scaleX(1)}
-  .navBtn:active{transform:translateY(0px) scale(.99)}
-  .primaryBtn{
-    background:linear-gradient(90deg, var(--accent), var(--accent2));
-    border:1px solid rgba(255,255,255,.10);
+  .btn:hover::after{transform:scaleX(1)}
+  .btn:active{transform:translateY(0px) scale(.99)}
+  .btnPrimary{
+    background:rgba(255,255,255,.08);
+    border-color:rgba(255,255,255,.20);
+    box-shadow:0 0 30px var(--clubGlow);
   }
   .disabled{opacity:.45;pointer-events:none;}
 
-  /* Profile */
-  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:12px}
-  .avatarWrap{
-    width:118px;height:118px;border-radius:18px;overflow:hidden;
-    border:1px solid rgba(255,255,255,.12);
-    background:rgba(255,255,255,.04);
-    position:relative;
-  }
-  .avatar{width:100%;height:100%;object-fit:cover}
-  .badge{
-    position:absolute;right:10px;bottom:10px;background:#fff;color:#000;
-    padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;display:none;
-  }
-
   select{
     width:100%;
-    padding:12px 12px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.14);
-    background:rgba(255,255,255,.03);
-    color:#fff;font-weight:850;
+    padding:12px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.03);color:#fff;font-weight:900;
     outline:none;
   }
 
-  .alertBox{
-    margin-top:10px;
+  /* Stat row */
+  .statRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .stat{
     border:1px solid rgba(255,255,255,.10);
     background:rgba(255,255,255,.03);
-    border-radius:14px;
-    padding:12px;
+    border-radius:16px;padding:12px;
   }
-  .alertTitle{
-    font-weight:900;
-    letter-spacing:.6px;
-    text-transform:uppercase;
-    font-size:12px;
-    color:rgba(255,255,255,.92);
-  }
-  .alertMsg{
-    margin-top:6px;
-    color:rgba(255,255,255,.62);
-    font-size:12px;
-    line-height:1.4;
-  }
+  .statLabel{font-size:11px;color:rgba(255,255,255,.62);font-weight:900;letter-spacing:.8px;text-transform:uppercase}
+  .statValue{margin-top:8px;font-size:18px;font-weight:900;color:rgba(255,255,255,.92)}
 
+  /* Toast */
   .toast{
     position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
     background:#fff;color:#000;padding:8px 14px;border-radius:999px;font-weight:850;display:none;
@@ -231,101 +187,81 @@
 <body>
   <div class="stage">
     <div class="wrap">
+      <div class="titleRow">
+        <div class="title" id="athleteName">LOADING</div>
+        <div class="pill" id="teamName">—</div>
+      </div>
 
-      <!-- Title must keep id athleteName (your JS uses it) -->
-      <div class="title" id="athleteName">LOADING</div>
-      <div class="sub">Your next event, profile tools, and quick actions — all in one place.</div>
-
-      <div class="metaLine">
+      <div class="metaRow">
         <span class="metaDot" aria-hidden="true"></span>
-        <span class="pill" id="roleText">ROLE: —</span>
-        <span class="pill" id="clubText">CLUB: —</span>
-        <span class="pill"><strong id="today">—</strong></span>
-        <span class="pill"><strong id="teamName">—</strong></span>
+        <span id="roleText">ROLE: —</span>
+        <span>•</span>
+        <span id="clubText">CLUB: —</span>
+        <span>•</span>
+        <span id="today">—</span>
       </div>
 
       <div class="grid">
 
-        <!-- LEFT COLUMN (stacked) -->
-        <div class="stack">
+        <!-- LEFT: Next Event + Alert -->
+        <div class="panel">
+          <div class="panelInner">
+            <div class="h2">Next Event</div>
+            <div class="sub" id="eventDetails"></div>
 
-          <!-- NEXT EVENT -->
-          <div class="panel">
-            <div class="panelInner">
-              <div class="h2">Next Event</div>
+            <div style="margin-top:10px;font-size:22px;font-weight:900;letter-spacing:.2px;" id="eventType">—</div>
 
-              <div class="big" id="eventType">—</div>
-              <div class="details" id="eventDetails"></div>
+            <div class="actions" style="margin-top:12px;">
+              <button class="btn" id="openScheduleListBtn" type="button">Schedule List</button>
+              <button class="btn" id="openScheduleCalBtn" type="button">Schedule Calendar</button>
+            </div>
 
-              <div class="actions">
-                <button class="navBtn" id="openScheduleListBtn" type="button">Schedule (List)</button>
-                <button class="navBtn" id="openScheduleCalBtn" type="button">Schedule (Calendar)</button>
+            <div class="statRow">
+              <div class="stat">
+                <div class="statLabel">Jersey</div>
+                <div class="statValue" id="jersey">—</div>
               </div>
-
-              <div class="statRow">
-                <div class="stat">
-                  <div class="statLabel">Jersey</div>
-                  <div class="statValue" id="jersey">—</div>
-                </div>
-                <div class="stat">
-                  <div class="statLabel">DOB</div>
-                  <div class="statValue" id="dob">—</div>
-                </div>
+              <div class="stat">
+                <div class="statLabel">DOB</div>
+                <div class="statValue" id="dob">—</div>
               </div>
             </div>
-          </div>
 
-          <!-- ✅ CLUB ALERT (separate section/panel) -->
-          <div class="panel">
-            <div class="panelInner">
-              <div class="h2">Club Alert</div>
-              <div class="alertBox">
-                <div class="alertTitle" id="alertTitle">—</div>
-                <div class="alertMsg" id="alertMsg"></div>
-              </div>
-              <div class="tiny">Latest alert for your club/team.</div>
+            <div style="margin-top:14px;">
+              <div class="h2" style="font-size:22px;">Alert</div>
+              <div style="margin-top:8px;font-size:16px;font-weight:900;" id="alertTitle">—</div>
+              <div class="sub" id="alertMsg"></div>
             </div>
           </div>
-
         </div>
 
-        <!-- RIGHT COLUMN (stacked) -->
-        <div class="stack">
+        <!-- RIGHT: Profile + Switch Player -->
+        <div class="panel">
+          <div class="panelInner">
+            <div class="h2">Profile</div>
 
-          <!-- PROFILE -->
-          <div class="panel">
-            <div class="panelInner">
-              <div class="h2">Profile</div>
-
-              <div class="row">
-                <div class="avatarWrap">
-                  <img id="avatar" class="avatar" />
-                  <div id="unsavedBadge" class="badge">NEW</div>
-                </div>
-
-                <div style="flex:1;min-width:220px;">
-                  <div class="actions">
-                    <button class="navBtn primaryBtn" id="viewIdpBtn" type="button">View IDP</button>
-                    <button class="navBtn" id="changePhotoBtn" type="button">Change Photo</button>
-                    <button class="navBtn primaryBtn disabled" id="savePhotoBtn" type="button">Save</button>
-                  </div>
-                  <div class="tiny">Update your profile photo and open your IDP.</div>
-                </div>
+            <div class="profileTop">
+              <div class="avatarWrap">
+                <img id="avatar" class="avatar" alt="Player photo"/>
+                <div id="unsavedBadge" class="badge">NEW</div>
               </div>
 
-              <input id="fileInput" type="file" accept="image/*" />
+              <div style="flex:1;min-width:220px;">
+                <div class="actions">
+                  <button class="btn btnPrimary" id="viewIdpBtn" type="button">View IDP</button>
+                  <button class="btn" id="changePhotoBtn" type="button">Change Photo</button>
+                  <button class="btn btnPrimary disabled" id="savePhotoBtn" type="button">Save</button>
+                </div>
+                <input id="fileInput" type="file" accept="image/*" />
+              </div>
             </div>
-          </div>
 
-          <!-- SWITCH PLAYER -->
-          <div class="panel">
-            <div class="panelInner">
-              <div class="h2">Switch Player</div>
-              <div class="tiny">If you’re a parent, choose which player to view.</div>
+            <div style="margin-top:14px;">
+              <div class="h2" style="font-size:22px;">Switch Player</div>
+              <div class="sub">If you’re a parent, choose which player to view.</div>
               <select id="kidSelect" style="display:none;margin-top:10px;"></select>
             </div>
           </div>
-
         </div>
 
       </div>
@@ -361,22 +297,27 @@ function getActivePlayerId(){
   return (state?.activePlayerId || state?.player?.id || "").trim();
 }
 
-/* ✅ Club Theme: reads from Wix STATE.payload.theme (same pattern as coach dash) */
+/* ✅ CLUB THEME APPLY (from Wix STATE.theme) */
 function applyThemeFromState(st){
-  const theme = st?.theme || null;
-  const accent  = (theme?.accent  || "#7B2EFF");
-  const accent2 = (theme?.accent2 || accent);
-  const glow    = (theme?.glow    || "rgba(123,46,255,.18)");
-  const r = document.documentElement.style;
-  r.setProperty("--accent", accent);
-  r.setProperty("--accent2", accent2);
-  r.setProperty("--clubGlow", glow);
+  try{
+    const theme = st?.theme || null;
+    const accent  = String(theme?.accent  || "#7B2EFF").trim();
+    const accent2 = String(theme?.accent2 || accent).trim();
+    const glow    = String(theme?.glow    || "rgba(123,46,255,.18)").trim();
+
+    const r = document.documentElement.style;
+    r.setProperty("--accent", accent);
+    r.setProperty("--accent2", accent2);
+    r.setProperty("--clubGlow", glow);
+
+    console.log("🟪 PLAYER DASH THEME APPLIED", { accent, accent2, glow });
+  }catch(e){
+    console.log("applyThemeFromState error", e);
+  }
 }
 
 function render(){
   if(!state) return;
-
-  applyThemeFromState(state);
 
   const p = state.player || {};
   const fullName = ((p.firstName||"")+" "+(p.lastName||"")).trim();
@@ -385,8 +326,8 @@ function render(){
   document.getElementById("roleText").textContent = "ROLE: " + (state.role || "—");
   document.getElementById("clubText").textContent = "CLUB: " + (state.clubSlug || "—");
   document.getElementById("today").textContent = state.today || "—";
-  document.getElementById("teamName").textContent = state.team?.name || "—";
 
+  document.getElementById("teamName").textContent = state.team?.name || "—";
   document.getElementById("jersey").textContent = p.jerseyNumber ? "#" + p.jerseyNumber : "—";
   document.getElementById("dob").textContent = p.dob || "—";
 
@@ -424,6 +365,10 @@ window.addEventListener("message", (e) => {
   if (m.type === "STATE") {
     state = m.payload;
 
+    // ✅ apply theme FIRST
+    applyThemeFromState(state);
+
+    // preserve saved image override
     const cmsUrl = state?.player?.photoUrl || "";
     if (lastSavedUrl && cmsUrl) {
       const baseLast = lastSavedUrl.split("?")[0];
