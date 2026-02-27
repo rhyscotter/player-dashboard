@@ -13,7 +13,7 @@
   --line:rgba(255,255,255,.10);
   --radius:26px;
 
-  /* ✅ club theme defaults (overridden by Wix STATE.theme) */
+  /* ✅ CLUB THEME (overridden by state.theme) */
   --accent:#7B2EFF;
   --accent2:#B266FF;
   --clubGlow: rgba(123,46,255,.18);
@@ -39,7 +39,10 @@ body{
   padding:16px 20px;
   display:flex;align-items:center;justify-content:space-between;
 }
-.kicker{font-size:11px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;}
+.kicker{
+  font-size:11px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;
+  color: var(--accent); /* ✅ themed */
+}
 .subkicker{margin-top:6px;font-size:12px;color:var(--muted);font-weight:650;}
 .pill{
   padding:10px 14px;border:1px solid var(--line);border-radius:999px;
@@ -51,11 +54,15 @@ body{
   display:flex;justify-content:space-between;align-items:flex-end;
   margin-bottom:22px;
 }
-.name{font-size:52px;font-weight:950;letter-spacing:-2px;}
+.name{
+  font-size:52px;font-weight:950;letter-spacing:-2px;
+  text-shadow: 0 0 26px var(--clubGlow); /* ✅ themed */
+}
 .teamTag{
   padding:10px 14px;border-radius:999px;border:1px solid var(--line);
   background:rgba(255,255,255,.04);font-size:12px;font-weight:900;
   letter-spacing:1px;text-transform:uppercase;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.02), 0 0 18px var(--clubGlow); /* ✅ themed */
 }
 
 /* MAIN GRID */
@@ -76,6 +83,7 @@ body{
 }
 .cardStrong{
   background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  box-shadow: 0 0 26px var(--clubGlow); /* ✅ themed */
 }
 
 .sectionTitle{
@@ -94,6 +102,7 @@ body{
 .avatarWrap{
   width:120px;height:120px;border-radius:30px;overflow:hidden;border:1px solid var(--line);
   background:rgba(255,255,255,.05);position:relative;
+  box-shadow: 0 0 18px var(--clubGlow); /* ✅ themed */
 }
 .avatar{width:100%;height:100%;object-fit:cover;}
 .badge{
@@ -106,14 +115,18 @@ button{
   border:none;border-radius:999px;padding:10px 14px;
   font-weight:900;font-size:11px;cursor:pointer;
 }
-
-/* ✅ themed primary button */
 .primary{
-  background:var(--accent);
+  background: var(--accent); /* ✅ themed */
   color:#fff;
-  box-shadow: 0 0 18px var(--clubGlow);
+  box-shadow: 0 0 26px var(--clubGlow);
 }
-.ghost{background:transparent;border:1px solid var(--line);color:#fff;}
+.ghost{
+  background:transparent;border:1px solid rgba(255,255,255,.16);color:#fff;
+}
+.ghost:hover{
+  border-color: var(--accent);
+  box-shadow: 0 0 22px var(--clubGlow);
+}
 .disabled{opacity:.45;pointer-events:none;}
 
 select{
@@ -121,11 +134,11 @@ select{
   background:rgba(255,255,255,.04);color:#fff;font-weight:850;
 }
 
-/* ✅ themed toast */
 .toast{
   position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
-  background:var(--accent);color:#fff;padding:8px 14px;border-radius:999px;font-weight:850;display:none;
-  box-shadow: 0 0 20px var(--clubGlow);
+  background: var(--accent); /* ✅ themed */
+  color:#fff;padding:8px 14px;border-radius:999px;font-weight:850;display:none;
+  box-shadow: 0 0 24px var(--clubGlow);
 }
 input[type=file]{display:none}
 </style>
@@ -231,21 +244,22 @@ let state = null;
 let pendingDataUrl = null;
 let lastSavedUrl = "";
 
-function post(type, payload = {}) {
-  window.parent.postMessage({ type, payload }, "*");
-}
-
-/* ✅ NEW: apply club theme from STATE.theme */
-function applyThemeFromState(st){
-  const theme = st && st.theme ? st.theme : null;
-  if(!theme) return;
-  const accent  = String(theme.accent  || "#7B2EFF");
-  const accent2 = String(theme.accent2 || accent);
-  const glow    = String(theme.glow    || "rgba(123,46,255,.18)");
+// ✅ NEW: apply club theme from state.theme
+function applyClubTheme(theme){
+  const t = theme || {};
+  const accent  = (t.accent  || "#7B2EFF").trim();
+  const accent2 = (t.accent2 || accent).trim();
+  const glow    = (t.glow    || "rgba(123,46,255,.18)").trim();
   const r = document.documentElement.style;
   r.setProperty("--accent", accent);
   r.setProperty("--accent2", accent2);
   r.setProperty("--clubGlow", glow);
+
+  console.log("🟦 PLAYER IFRAME: theme applied", { accent, accent2, glow });
+}
+
+function post(type, payload = {}) {
+  window.parent.postMessage({ type, payload }, "*");
 }
 
 function toast(msg){
@@ -268,9 +282,6 @@ function getActivePlayerId(){
 
 function render(){
   if(!state) return;
-
-  // ✅ apply theme every render (safe)
-  applyThemeFromState(state);
 
   const p = state.player || {};
   const fullName = ((p.firstName||"")+" "+(p.lastName||"")).trim();
@@ -318,12 +329,13 @@ window.addEventListener("message", (e) => {
   if (m.type === "STATE") {
     state = m.payload;
 
+    // ✅ Apply theme immediately when STATE arrives
+    applyClubTheme(state?.theme);
+
     const cmsUrl = state?.player?.photoUrl || "";
     if (lastSavedUrl && cmsUrl) {
       const baseLast = lastSavedUrl.split("?")[0];
-      if (cmsUrl === baseLast) {
-        lastSavedUrl = "";
-      }
+      if (cmsUrl === baseLast) lastSavedUrl = "";
     }
 
     render();
@@ -338,6 +350,7 @@ window.addEventListener("message", (e) => {
   if (m.type === "PHOTO_SAVED") {
     if (m.payload?.ok) {
       toast("Saved");
+
       pendingDataUrl = null;
 
       const url = (m.payload?.url || "").trim();
